@@ -1,0 +1,879 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// datasource db {
+//   provider = "mysql"
+//   url      = env("CLEARDB_DATABASE_URL")
+// }
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Secretaria {
+  id   String @id @default(uuid())
+  name String
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  SecretariaUser SecretariaUser[]
+  Escola         Escola[]
+
+  @@map("secretarias")
+}
+
+model SecretariaUser {
+  id String @id @default(uuid())
+
+  name                 String
+  email                String
+  password             String
+  mat                  String
+  passwordResetToken   String?
+  passwordResetExpires DateTime?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  id_secretaria String
+  secretaria    Secretaria @relation(fields: [id_secretaria], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("secretaria_users")
+}
+
+model Escola {
+  id String @id @default(uuid())
+
+  name        String
+  school_type Type
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  id_secretaria String?
+  secretaria    Secretaria? @relation(fields: [id_secretaria], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  EscolaUser EscolaUser[]
+  Disciplina Disciplina[]
+  Serie      Serie[]
+
+  @@map("escolas")
+}
+
+enum Type {
+  municipal
+  estadual
+  privada
+}
+
+model EscolaUser {
+  id String @id @default(uuid())
+
+  name                 String
+  email                String?
+  password             String
+  passwordResetToken   String?
+  passwordResetExpires DateTime?
+  isAuthenticated      Boolean   @default(false)
+  cpf                  String?   @unique
+  mat                  String?   @unique
+  born                 String?
+  genre                String?
+  avatar               String?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  id_escola String?
+  escola    Escola? @relation(fields: [id_escola], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  id_responsavel String?
+  responsavel    Responsavel? @relation(fields: [id_responsavel], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  User_has_address          User_has_address[]
+  User_has_phone            User_has_phone[]
+  User_has_social           User_has_social[]
+  EscolaUser_has_type       EscolaUser_has_type[]
+  Type_has_permissao_custom Type_has_permissao_custom[]
+  Professor                 Professor[]
+  Aluno                     Aluno[]
+
+  @@map("escola_users")
+}
+
+model Responsavel {
+  id String @id @default(uuid())
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  name                 String
+  email                String?
+  password             String
+  passwordResetToken   String?
+  passwordResetExpires DateTime?
+  cpf                  String?   @unique
+  phone                String?
+
+  EscolaUser EscolaUser[]
+
+  @@map("responsaveis")
+}
+
+model User_has_address {
+  id String @id @default(uuid())
+
+  state             String?
+  city              String?
+  district          String?
+  number            String?
+  street            String?
+  address_continued String?
+  zip_code          String?
+  reference         String?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  id_user String
+  user    EscolaUser @relation(fields: [id_user], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("escola_user_has_addresses")
+}
+
+model User_has_phone {
+  id String @id @default(uuid())
+
+  phone String?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  id_user String
+  user    EscolaUser @relation(fields: [id_user], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("escola_user_has_phones")
+}
+
+model User_has_social {
+  id String @id @default(uuid())
+
+  instagram String?
+  facebook  String?
+  twitter   String?
+  whatsapp  String?
+  email     String?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  id_user String
+  user    EscolaUser @relation(fields: [id_user], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("escola_user_has_socials")
+}
+
+model EscolaUserType {
+  id String @id @default(uuid())
+
+  name String
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  EscolaUser_has_type       EscolaUser_has_type[]
+  Type_has_permissao        Type_has_permissao[]
+  Type_has_permissao_custom Type_has_permissao_custom[]
+
+  @@map("escola_user_types")
+}
+
+model EscolaUser_has_type {
+  id String @id @default(uuid())
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  id_escola_user String
+  escola_user    EscolaUser @relation(fields: [id_escola_user], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  id_type          String
+  escola_user_type EscolaUserType @relation(fields: [id_type], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("escola_user_has_types")
+}
+
+model Permissao {
+  id String @id @default(uuid())
+
+  description String
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  Type_has_permissao        Type_has_permissao[]
+  Type_has_permissao_custom Type_has_permissao_custom[]
+
+  @@map("permissoes")
+}
+
+model Type_has_permissao {
+  id String @id @default(uuid())
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  id_type          String
+  escola_user_type EscolaUserType @relation(fields: [id_type], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  id_permissao String
+  permissao    Permissao @relation(fields: [id_permissao], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("type_has_permissoes")
+}
+
+model Type_has_permissao_custom {
+  id String @id @default(uuid())
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  id_type          String
+  escola_user_type EscolaUserType @relation(fields: [id_type], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  id_permissao String
+  permissao    Permissao @relation(fields: [id_permissao], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  id_escola_user String
+  escola_user    EscolaUser @relation(fields: [id_escola_user], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("type_has_permissoes_custom")
+}
+
+model Professor {
+  id String @id @default(uuid())
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  education   String
+  experience  String
+  description String
+
+  id_escola_user String
+  escola_user    EscolaUser @relation(fields: [id_escola_user], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  Lembrete               Lembrete[]
+  ProfessorHasDisciplina ProfessorHasDisciplina[]
+  Conteudo               Conteudo[]
+
+  @@map("professores")
+}
+
+model Disciplina {
+  id String @id @default(uuid())
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  name     String
+  code     String            @unique
+  status   Status_Disciplina @default(ativo)
+  icon     String?           @default("")
+  bk_img   String?           @default("")
+  bk_color String?           @default("")
+
+  id_escola String?
+  escola    Escola? @relation(fields: [id_escola], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  SerieHasDisciplina     SerieHasDisciplina[]
+  Conteudo               Conteudo[]
+  Aula                   Aula[]
+  Questao                Questao[]
+  Media                  Media[]
+  ProfessorHasDisciplina ProfessorHasDisciplina[]
+  Atividade              Atividade[]
+
+  @@map("disciplinas")
+}
+
+enum Status_Disciplina {
+  ativo
+  inativo
+  cancelado
+}
+
+model Serie {
+  id String @id @default(uuid())
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  name      String
+  id_escola String?
+  escola    Escola? @relation(fields: [id_escola], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  Turma              Turma[]
+  SerieHasDisciplina SerieHasDisciplina[]
+  Aula               Aula[]
+  Atividade          Atividade[]
+
+  @@map("series")
+}
+
+model Turma {
+  id String @id @default(uuid())
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  name   String
+  code   String       @unique
+  shift  Shift_Turma
+  year   String
+  status Status_Turma @default(ativo)
+
+  id_serie                    String?
+  serie                       Serie?                        @relation(fields: [id_serie], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  Aluno                       Aluno[]
+  Lembrete                    Lembrete[]
+  ProfessorHasDisciplinaTurma ProfessorHasDisciplinaTurma[]
+
+  @@map("turmas")
+}
+
+enum Shift_Turma {
+  integral
+  matutino
+  vespertino
+  noturno
+}
+
+enum Status_Turma {
+  ativo
+  inativo
+  cancelado
+}
+
+model ProfessorHasDisciplina {
+  id String @id @default(uuid())
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  id_professor String
+  professor    Professor @relation(fields: [id_professor], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  id_disciplina               String
+  disciplina                  Disciplina                    @relation(fields: [id_disciplina], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  ProfessorHasDisciplinaTurma ProfessorHasDisciplinaTurma[]
+
+  @@map("professor_has_disciplinas")
+}
+
+model ProfessorHasDisciplinaTurma {
+  id String @id @default(uuid())
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  id_professor_has_disciplinas String
+  professor_has_disciplinas    ProfessorHasDisciplina @relation(fields: [id_professor_has_disciplinas], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  id_turma String
+  turma    Turma  @relation(fields: [id_turma], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("professor_has_disciplinas_turmas")
+}
+
+model SerieHasDisciplina {
+  id String @id @default(uuid())
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  id_serie String
+  serie    Serie  @relation(fields: [id_serie], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  id_disciplina String
+  disciplina    Disciplina @relation(fields: [id_disciplina], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("serie_has_disciplinas")
+}
+
+model Aluno {
+  id String @id @default(uuid())
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  points Float @default(0)
+
+  id_escola_user String?
+  escola_user    EscolaUser? @relation(fields: [id_escola_user], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  id_turma String?
+  turma    Turma?  @relation(fields: [id_turma], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  Aluno_responde_atividade Aluno_responde_atividade[]
+  Anotacao                 Anotacao[]
+  Lembrete                 Lembrete[]
+  Media                    Media[]
+  Favorito                 Favorito[]
+  Rank                     Rank[]
+  Progresso                Progresso[]
+  Aluno_has_conquista      Aluno_has_conquista[]
+
+  @@map("alunos")
+}
+
+model Favorito {
+  id String @id @default(uuid())
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  id_aluno String
+  aluno    Aluno  @relation(fields: [id_aluno], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  id_aula String
+  aula    Aula   @relation(fields: [id_aula], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("favoritos")
+}
+
+model Atividade {
+  id String @id @default(uuid())
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  title String
+  grade Float   @default(10)
+  thumb String?
+
+  id_disciplina String
+  disciplina    Disciplina @relation(fields: [id_disciplina], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  id_serie String
+  serie    Serie  @relation(fields: [id_serie], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  Atividade_has_questao    Atividade_has_questao[]
+  Aluno_responde_atividade Aluno_responde_atividade[]
+  Conteudo_has_atividade   Conteudo_has_atividade[]
+  Conteudo_has_itens       Conteudo_has_itens[]
+
+  @@map("atividades")
+}
+
+model Questao {
+  id String @id @default(uuid())
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  title         String
+  question_type String
+  grade         Float              @default(1)
+  difficulty    questao_difficulty @default(normal)
+
+  id_disciplina String?
+  disciplina    Disciplina? @relation(fields: [id_disciplina], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  opcao                 Opcao[]
+  Atividade_has_questao Atividade_has_questao[]
+
+  @@map("questoes")
+}
+
+enum questao_difficulty {
+  easy
+  normal
+  hard
+  very_hard
+}
+
+model Opcao {
+  id String @id @default(uuid())
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  description String
+  is_correct  Boolean
+
+  id_questao String
+  questao    Questao @relation(fields: [id_questao], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("opcoes")
+}
+
+model Atividade_has_questao {
+  id String @id @default(uuid())
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  id_questao String
+  questao    Questao @relation(fields: [id_questao], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  id_atividade String
+  atividade    Atividade @relation(fields: [id_atividade], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("atividade_has_questoes")
+}
+
+model Aluno_responde_atividade {
+  id String @id @default(uuid())
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  nota    Float
+  attempt Int   @default(1)
+  time    Int   @default(0)
+
+  id_atividade String
+  atividade    Atividade @relation(fields: [id_atividade], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  id_bimestre String?
+  bimestre    Bimestre? @relation(fields: [id_bimestre], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  id_aluno String
+  aluno    Aluno  @relation(fields: [id_aluno], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("aluno_responde_atividades")
+}
+
+model Conteudo {
+  id String @id @default(uuid())
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  name   String
+  status Boolean? @default(true)
+
+  id_disciplina String
+  disciplina    Disciplina @relation(fields: [id_disciplina], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  id_bimestre String?
+  bimestre    Bimestre? @relation(fields: [id_bimestre], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  created_by String?
+  professor  Professor? @relation(fields: [created_by], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  Conteudo_has_aula      Conteudo_has_aula[]
+  Conteudo_has_atividade Conteudo_has_atividade[]
+  Conteudo_has_itens     Conteudo_has_itens[]
+
+  @@map("conteudos")
+}
+
+model Conteudo_has_itens {
+  id String @id @default(uuid())
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  type String
+
+  id_conteudo String
+  conteudo    Conteudo @relation(fields: [id_conteudo], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  id_aula String?
+  aula    Aula?   @relation(fields: [id_aula], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  id_atividade String?
+  atividade    Atividade? @relation(fields: [id_atividade], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("conteudo_has_itens")
+}
+
+model Conteudo_has_aula {
+  id String @id @default(uuid())
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  id_conteudo String
+  conteudo    Conteudo @relation(fields: [id_conteudo], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  id_aula String
+  aula    Aula   @relation(fields: [id_aula], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("conteudo_has_aulas")
+}
+
+model Conteudo_has_atividade {
+  id String @id @default(uuid())
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  id_conteudo String
+  conteudo    Conteudo @relation(fields: [id_conteudo], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  id_atividade String
+  atividade    Atividade @relation(fields: [id_atividade], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("conteudo_has_atividades")
+}
+
+model Tag {
+  id String @id @default(uuid())
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  name String
+
+  Aula_has_tag      Aula_has_tag[]
+  Anotacao_has_tags Anotacao_has_tags[]
+
+  @@map("tags")
+}
+
+model Aula {
+  id String @id @default(uuid())
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  hash   String
+  title  String
+  file   String
+  rating Float?
+  thumb  String?
+  time   String
+
+  id_serie String
+  serie    Serie  @relation(fields: [id_serie], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  id_disciplina String?
+  disciplina    Disciplina? @relation(fields: [id_disciplina], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  Aula_has_tag       Aula_has_tag[]
+  Anotacao           Anotacao[]
+  Favorito           Favorito[]
+  Conteudo_has_aula  Conteudo_has_aula[]
+  Progresso          Progresso[]
+  Conteudo_has_itens Conteudo_has_itens[]
+
+  @@map("aulas")
+}
+
+model Aula_has_tag {
+  id String @id @default(uuid())
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  id_aula String
+  aula    Aula   @relation(fields: [id_aula], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  id_tag String
+  tag    Tag    @relation(fields: [id_tag], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("aula_has_tags")
+}
+
+model Anotacao {
+  id String @id @default(uuid())
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  descricao String
+
+  id_aluno String
+  aluno    Aluno  @relation(fields: [id_aluno], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  id_aula String?
+  aula    Aula?   @relation(fields: [id_aula], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  Anotacao_has_tags Anotacao_has_tags[]
+
+  @@map("anotacoes")
+}
+
+model Anotacao_has_tags {
+  id String @id @default(uuid())
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  id_anotacao String
+  anotacao    Anotacao @relation(fields: [id_anotacao], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  id_tag String
+  tag    Tag    @relation(fields: [id_tag], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("anotacao_has_tags")
+}
+
+model Lembrete {
+  id String @id @default(uuid())
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  title       String
+  description String
+  data        DateTime
+  start       DateTime
+  end         DateTime
+
+  id_turma String?
+  turma    Turma?  @relation(fields: [id_turma], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  id_aluno String?
+  aluno    Aluno?  @relation(fields: [id_aluno], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  id_professor String?
+  professor    Professor? @relation(fields: [id_professor], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("lembretes")
+}
+
+model Bimestre {
+  id String @id @default(uuid())
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  number                   Int
+  start                    DateTime
+  end                      DateTime
+  Conteudo                 Conteudo[]
+  Aluno_responde_atividade Aluno_responde_atividade[]
+  Media                    Media[]
+  Progresso                Progresso[]
+
+  @@map("bimestres")
+}
+
+model Media {
+  id String @id @default(uuid())
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  value Float
+
+  id_disciplina String
+  disciplina    Disciplina @relation(fields: [id_disciplina], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  id_aluno String
+  aluno    Aluno  @relation(fields: [id_aluno], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  id_bimestre String?
+  bimestre    Bimestre? @relation(fields: [id_bimestre], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("medias")
+}
+
+model Rank {
+  id String @id @default(uuid())
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  id_aluno String?
+  points   Float      @default(0)
+  aluno    Aluno?     @relation(fields: [id_aluno], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  rank_img rank_img[]
+
+  @@map("ranks")
+}
+
+// Essa tabela vai sumir
+model rank_img {
+  id String @id @default(uuid())
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  first  String @default("")
+  second String @default("")
+  third  String @default("")
+
+  id_rank String?
+  rank    Rank?   @relation(fields: [id_rank], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("rank_imgs")
+}
+
+model Progresso {
+  id String @id @default(uuid())
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  id_aluno String
+  aluno    Aluno  @relation(fields: [id_aluno], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  id_aula String
+  aula    Aula   @relation(fields: [id_aula], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  id_bimestre String
+  bimestre    Bimestre @relation(fields: [id_bimestre], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  progress Int
+
+  @@map("progressos")
+}
+
+model Conquista {
+  id String @id @default(uuid())
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  name                String
+  description         String
+  type                Conquista_type
+  objective           String
+  objective_secondary String?
+  discipline          String
+  difficulty          questao_difficulty    @default(normal)
+  Aluno_has_conquista Aluno_has_conquista[]
+
+  @@map("conquistas")
+}
+
+enum Conquista_type {
+  ALCANCE_MEDIA_X
+  RESPONDA_X_ATIVIDADE
+  NOTA_X_EM_Y_ATIVIDADES
+  ASSISTA_X_MINUTOS_DE_AULA
+  MAIOR_PONTUACAO_NA_X_AO_FIM_DO_BIMESTRE
+  X_DIAS_SEGUIDOS_NO_APLICATIVO
+}
+
+enum Conquista_difficulty {
+  easy
+  normal
+  hard
+}
+
+model Aluno_has_conquista {
+  id String @id @default(uuid())
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  progress Int
+
+  id_aluno String
+  aluno    Aluno  @relation(fields: [id_aluno], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  id_conquista String
+  conquista    Conquista @relation(fields: [id_conquista], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}

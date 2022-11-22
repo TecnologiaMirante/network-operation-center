@@ -1,0 +1,37 @@
+
+export interface AtividadeHasQuestoesCreateData {
+    id_questao: string;
+    id_atividade: string;
+}
+
+export interface AtividadeHasQuestoesFind {
+    id: string;
+}
+
+export interface AtividadeFindQuestoesByAtividade {
+    id_atividade: string;
+}
+
+export interface AtividadeUpdateQuestoesGrade {
+    id_atividade: string;
+}
+
+export interface AtividadeHasQuestoesDelete {
+    id: string;
+}
+
+export interface AtividadeHasQuestoesUpdate {
+    id: string;
+    id_questao?: string;
+    id_atividade?: string;
+}
+
+export interface AtividadeHasQuestoesRepository {
+    create: (data: AtividadeHasQuestoesCreateData) => Promise<Object>;
+    get: () => Promise<Object>;
+    find: (data: AtividadeHasQuestoesFind) => Promise<Object | null>;
+    findQuestoesByAtividade: (data: AtividadeFindQuestoesByAtividade) => Promise<Object | null>;
+    updateQuestoesGrade: (data: AtividadeUpdateQuestoesGrade) => Promise<void>;
+    delete: (data: AtividadeHasQuestoesDelete) => Promise<void>;
+    update: (data: AtividadeHasQuestoesUpdate) => Promise<void>;
+}
