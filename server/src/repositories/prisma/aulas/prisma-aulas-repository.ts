@@ -95,6 +95,8 @@ export class PrismaAulasRepository implements AulasRepository {
   }
 
   async getBySerieDisciplinaProfessor ({ id_serie, id_disciplina }: AulaGetBySerieDisciplinaProfessor) {
+
+    // Buscando as aulas existentes no banco de dados
     const aulas = await prisma.aula.findMany(
       {
         where: {
@@ -108,15 +110,22 @@ export class PrismaAulasRepository implements AulasRepository {
       }
     );
 
+    // Buscando os conteúdos existentes
+    const conteudos = await prisma.conteudo.findMany({
+      where: {
+        id_disciplina,
+        id_serie
+      }
+    })
+
+    // Buscando as atividades cadastradas
     const atividades = await prisma.atividade.findMany({
       where: {
         id_serie, id_disciplina
        }
     });
 
-
-
-    return {aulas, atividades};
+    return {aulas, conteudos, atividades};
   }
 
   async delete({ id }: AulaDelete) {

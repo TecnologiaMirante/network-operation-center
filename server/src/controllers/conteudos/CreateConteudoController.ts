@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { PrismaConteudosRepository } from "../../repositories/prisma/conteudos/prisma-conteudo-repository";
 import { PrismaDisciplinasRepository } from "../../repositories/prisma/disciplinas/prisma-disciplinas-repository";
+import { PrismaSeriesRepository } from "../../repositories/prisma/series/prisma-series-repository";
 import { CreateConteudoService } from "../../services/conteudos/CreateConteudoService";
 import { PrismaAulasRepository } from "../../repositories/prisma/aulas/prisma-aulas-repository";
 import { PrismaAtividadesRepository } from "../../repositories/prisma/atividades/prisma-atividades-repository";
@@ -12,31 +13,33 @@ class CreateConteudoController {
   async handle(req:Request, res:Response) {
 
     // Dados do corpo da requisição
-    const { name, id_disciplina, id_bimestre, created_by, array_conteudos, status } = req.body;
+    const { name, id_disciplina, id_serie, id_bimestre, created_by, array_conteudos, status } = req.body;
 
-    console.log("\n\n\n =================================================")
-    console.log("name: ", name)
-    console.log("id_disciplina: ", id_disciplina)
-    console.log("id_bimestre: ", id_bimestre)
-    console.log("created_by: ", created_by)
-    console.log("array_conteudos: ", array_conteudos)
-    console.log("status: ", status)
+    // console.log("\n\n\n =================================================")
+    // console.log("name: ", name)
+    // console.log("id_disciplina: ", id_disciplina)
+    // console.log("id_bimestre: ", id_bimestre)
+    // console.log("created_by: ", created_by)
+    // console.log("array_conteudos: ", array_conteudos)
+    // console.log("status: ", status)
 
     // Repositório dos modelos do Prisma
     const prismaConteudosRepository = new PrismaConteudosRepository();
     const prismaDisciplinasRepository = new PrismaDisciplinasRepository();
+    const prismaSeriesRepository = new PrismaSeriesRepository();
     const prismaAulasRepository = new PrismaAulasRepository();
     const prismaAtividadesRepository = new PrismaAtividadesRepository();
     const prismaBimestresRepository = new PrismaBimestresRepository();
     const prismaConteudoHasItensRepository = new PrismaConteudoHasItensRepository();
 
     // Service do Conteúdo =================================================================================================
-    const createConteudoService = new CreateConteudoService(prismaConteudosRepository, prismaDisciplinasRepository, prismaBimestresRepository);
+    const createConteudoService = new CreateConteudoService(prismaConteudosRepository, prismaDisciplinasRepository, prismaSeriesRepository, prismaBimestresRepository);
 
     // Executando o service
     const conteudo = await createConteudoService.execute({
       name,
       id_disciplina,
+      id_serie,
       id_bimestre,
       created_by,
       status

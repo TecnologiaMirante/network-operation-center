@@ -2,6 +2,7 @@
 export interface ConteudoCreateData {
     name: string;
     id_disciplina: string;
+    id_serie: string;
     id_bimestre: string;
     created_by: string;
     status?: boolean;
@@ -33,6 +34,7 @@ export interface ConteudoUpdate {
     id: string;
     name?: string;
     id_disciplina?: string;
+    id_serie?: string;
     id_bimestre?: string;
     status?: boolean;
 }

@@ -36,7 +36,7 @@ export class GetAulasBySerieDisciplinaProfessorService {
         },
         {
           name: "conteudos",
-          items: []
+          items: Object(itens).conteudos
         },
         {
           name: "atividades",

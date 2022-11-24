@@ -9,11 +9,12 @@ import { ConteudoCreateData, ConteudosRepository,
 
 export class PrismaConteudosRepository implements ConteudosRepository {
 
-  async create( { name, id_disciplina, id_bimestre, created_by, status }: ConteudoCreateData ) {
+  async create( { name, id_disciplina, id_serie, id_bimestre, created_by, status }: ConteudoCreateData ) {
     return await prisma.conteudo.create({
       data: {
         name,
         id_disciplina,
+        id_serie,
         id_bimestre,
         created_by,
         status
@@ -321,7 +322,7 @@ export class PrismaConteudosRepository implements ConteudosRepository {
     });
   }
 
-  async update({ id, name, id_disciplina, id_bimestre, status }: ConteudoUpdate) {
+  async update({ id, name, id_disciplina, id_serie, id_bimestre, status }: ConteudoUpdate) {
     return await prisma.conteudo.update({
       where: {
         id
@@ -329,6 +330,7 @@ export class PrismaConteudosRepository implements ConteudosRepository {
       data: {
         name,
         id_disciplina,
+        id_serie,
         id_bimestre,
         status
       }

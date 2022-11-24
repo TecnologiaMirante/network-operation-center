@@ -323,6 +323,7 @@ model Serie {
   SerieHasDisciplina SerieHasDisciplina[]
   Aula               Aula[]
   Atividade          Atividade[]
+  Conteudo           Conteudo[]
 
   @@map("series")
 }
@@ -562,6 +563,9 @@ model Conteudo {
 
   id_disciplina String
   disciplina    Disciplina @relation(fields: [id_disciplina], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  id_serie String
+  serie    Serie  @relation(fields: [id_serie], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   id_bimestre String?
   bimestre    Bimestre? @relation(fields: [id_bimestre], references: [id], onDelete: Cascade, onUpdate: Cascade)
