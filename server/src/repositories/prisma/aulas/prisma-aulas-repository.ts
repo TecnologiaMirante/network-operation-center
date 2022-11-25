@@ -115,8 +115,70 @@ export class PrismaAulasRepository implements AulasRepository {
       where: {
         id_disciplina,
         id_serie
+      },
+      include: {
+        Conteudo_has_itens: {
+          select: {
+            aula: true,
+            atividade: true
+          },
+          orderBy: {
+            created_at: "asc"
+          }
+        }
       }
-    })
+    });
+
+    let array_conteudos = [];
+
+    // Percorrendo o array de conteúdos
+    for (let conteudo of conteudos) {
+      
+      Object(conteudo).array_conteudos_base = Object(conteudo).Conteudo_has_itens;
+      delete Object(conteudo).Conteudo_has_itens;
+  
+      // Se o array de conteudos não estiver vazio
+      if (Object(conteudo).array_conteudos_base.length > 0) {
+  
+        console.log(Object(conteudo).array_conteudos_base[0])
+        
+        for (let item of Object(conteudo).array_conteudos_base) {
+          console.log("aqui")
+  
+          // Removendo o campo da aula caso ela seja nula
+          if (item.aula == null) {
+            delete item.aula;
+            array_conteudos.push(item)
+          }
+          
+          // Removendo o campo da atividade caso ela seja nula
+          else if (item.atividade == null) {
+            delete item.atividade;
+            array_conteudos.push(item)
+          }
+        }
+    
+        // Organizando o nome do campo
+        Object(conteudo).array_conteudos = array_conteudos
+        delete Object(conteudo).array_conteudos_base
+  
+        // Pegando index do primeiro vídeo
+        const index = Object(conteudo).array_conteudos.findIndex((object: any) => {
+          return Object.keys(object)[0] === 'aula';
+        });
+  
+        Object(conteudo).first_aula = {
+          id: Object(conteudo).array_conteudos[index].aula.id,
+          file: Object(conteudo).array_conteudos[index].aula.file,
+          progress: Object(conteudo).array_conteudos[index].aula.progress,
+          favorite: Object(conteudo).array_conteudos[index].aula.favorite
+        }
+      }
+
+    }
+
+    console.log("chegou aqui antes das atividades")
+
 
     // Buscando as atividades cadastradas
     const atividades = await prisma.atividade.findMany({
@@ -124,6 +186,9 @@ export class PrismaAulasRepository implements AulasRepository {
         id_serie, id_disciplina
        }
     });
+
+    console.log("chegou aqui depois das atividades")
+
 
     return {aulas, conteudos, atividades};
   }

@@ -127,6 +127,7 @@ export class PrismaConteudosRepository implements ConteudosRepository {
   }
 
   async findByAluno({ id, id_aluno }: ConteudoFindByAluno) {
+
     const conteudos = await prisma.conteudo.findUnique(
       {
         where: {
@@ -143,9 +144,21 @@ export class PrismaConteudosRepository implements ConteudosRepository {
               created_at: "asc"
             }
           },
+          professor: {
+            select: {
+              escola_user: {
+                select: {
+                  name: true
+                }
+              }
+            }
+          }
         },
       }
     );
+
+    Object(conteudos).professor = Object(conteudos).professor.escola_user.name
+    // delete Object(conteudos).professor;
 
     Object(conteudos).array_conteudos_base = Object(conteudos).Conteudo_has_itens;
     delete Object(conteudos).Conteudo_has_itens;
@@ -162,6 +175,7 @@ export class PrismaConteudosRepository implements ConteudosRepository {
           delete item.aula;
           array_conteudos.push(item)
         }
+
         // Removendo o campo da atividade caso ela seja nula
         else if (item.atividade == null) {
           delete item.atividade;
@@ -210,6 +224,7 @@ export class PrismaConteudosRepository implements ConteudosRepository {
 
       Object(conteudos).first_aula = {
         id: Object(conteudos).array_conteudos[index].aula.id,
+        title: Object(conteudos).array_conteudos[index].aula.title,
         file: Object(conteudos).array_conteudos[index].aula.file,
         progress: Object(conteudos).array_conteudos[index].aula.progress,
         favorite: Object(conteudos).array_conteudos[index].aula.favorite

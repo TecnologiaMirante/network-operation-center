@@ -26,8 +26,12 @@ export class FindConteudoByAlunoService {
       return new Error("Aluno inexistente!");
     }
 
+    if (!(await this.conteudosRepository.find({ id }))) {
+      return new Error("Conteúdo inexistente!");
+    }
+
     // Buscando ...
-    const conteudo = await this.conteudosRepository.findByAluno({id, id_aluno})
+    const conteudo = await this.conteudosRepository.findByAluno({id, id_aluno});
 
     // Verificando se o conteúdo existe
     if(!conteudo){
