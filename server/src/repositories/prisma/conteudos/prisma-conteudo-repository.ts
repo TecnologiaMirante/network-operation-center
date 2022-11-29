@@ -4,7 +4,8 @@ import { ConteudoCreateData, ConteudosRepository,
   ConteudoDelete, ConteudoUpdate, 
   ConteudoGetByAlunoDisciplina, 
   ConteudoFindByAluno, 
-  ConteudoGetByProfessor
+  ConteudoGetByProfessor,
+  ConteudoFindBySerieDisciplina
 } from "../../interfaces/conteudos/conteudo-repository";
 
 export class PrismaConteudosRepository implements ConteudosRepository {
@@ -38,6 +39,94 @@ export class PrismaConteudosRepository implements ConteudosRepository {
       }
     });
     return conteudos;
+  }
+
+  async findBySerieDisciplina( { id, id_serie, id_disciplina }: ConteudoFindBySerieDisciplina ) {
+
+    // Buscando as aulas existentes no banco de dados
+    const aulas = await prisma.aula.findMany(
+      {
+        where: {
+          id_serie, id_disciplina
+        },
+        orderBy: {
+          disciplina: {
+            name: "asc"
+          }
+        }
+      }
+    );
+
+   // Buscando as atividades cadastradas
+   const atividades = await prisma.atividade.findMany({
+    where: {
+      id_serie, id_disciplina
+      }
+    });
+
+    
+    // Buscando os conteúdos existentes
+    const conteudo = await prisma.conteudo.findFirst({
+      where: {
+        id,
+      },
+      include: {
+        Conteudo_has_itens: {
+          select: {
+            aula: true,
+            atividade: true
+          },
+          orderBy: {
+            created_at: "asc"
+          }
+        }
+      }
+    });
+ 
+    let array_conteudos = [];
+
+    // Percorrendo o array de itens (aulas, atividades)
+    Object(conteudo).array_conteudos_base = Object(conteudo).Conteudo_has_itens;
+    delete Object(conteudo).Conteudo_has_itens;
+
+    // Se o array de conteudos não estiver vazio
+    if (Object(conteudo).array_conteudos_base.length > 0) {
+
+      console.log(Object(conteudo).array_conteudos_base[0])
+      
+      for (let item of Object(conteudo).array_conteudos_base) {
+
+        // Removendo o campo da aula caso ela seja nula
+        if (item.aula == null) {
+          delete item.aula;
+          array_conteudos.push(item)
+        }
+        
+        // Removendo o campo da atividade caso ela seja nula
+        else if (item.atividade == null) {
+          delete item.atividade;
+          array_conteudos.push(item)
+        }
+      }
+  
+      // Organizando o nome do campo
+      Object(conteudo).array_conteudos = array_conteudos
+      delete Object(conteudo).array_conteudos_base
+
+      // Pegando index do primeiro vídeo
+      const index = Object(conteudo).array_conteudos.findIndex((object: any) => {
+        return Object.keys(object)[0] === 'aula';
+      });
+
+      Object(conteudo).first_aula = {
+        id: Object(conteudo).array_conteudos[index].aula.id,
+        file: Object(conteudo).array_conteudos[index].aula.file,
+        progress: Object(conteudo).array_conteudos[index].aula.progress,
+        favorite: Object(conteudo).array_conteudos[index].aula.favorite
+      }
+    }
+
+    return {aulas, conteudo, atividades};
   }
 
   async getByAlunoDisciplina({ id_aluno, id_disciplina }: ConteudoGetByAlunoDisciplina) {

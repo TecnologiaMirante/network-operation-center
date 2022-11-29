@@ -27,8 +27,6 @@ export class GetAulasBySerieDisciplinaProfessorService {
         id_disciplina
       })
 
-      console.log(Object(itens).atividades)
-
       const aulas = [
         {
           name: "aulas",
@@ -36,7 +34,8 @@ export class GetAulasBySerieDisciplinaProfessorService {
         },
         {
           name: "conteudos",
-          items: Object(itens).conteudos
+          // items: Object(itens).conteudos
+          items: []
         },
         {
           name: "atividades",

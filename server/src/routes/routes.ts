@@ -198,6 +198,7 @@ import { GetLastAulasController } from "../controllers/aulas/GetLastAulasControl
 import { CreateConquistasController } from "../controllers/conquistas/CreateConquistasController";
 import { GetDadosBIAtividadesController } from "../controllers/dados/GetDadosBIAtividadesController";
 import { GetDadosBIAulasController } from "../controllers/dados/GetDadosBIAulasController";
+import { FindConteudoBySerieDisciplinaController } from "../controllers/conteudos/FindConteudoBySerieDisciplinaController";
 
 const router = Router();
 
@@ -206,6 +207,7 @@ router
   .get();
 
 // Secretaria Users
+// #secretaria-users
 router
   .route("/secretarias/users")
   .post(new CreateSecretariaUserController().handle)
@@ -230,7 +232,7 @@ router
   .put(new UpdateSecretariaUserController().handle)
 
 
-// Secretaria
+// #secretaria
 router
   .route("/secretarias")
   .post(new CreateSecretariaController().handle)
@@ -244,6 +246,7 @@ router
 
 
 // Escolas Users Types
+// #escola-users-types
 router
   .route("/escolas/users/types")
   .get(new GetEscolaUserTypesController().handle)
@@ -256,6 +259,7 @@ router
   .put(new UpdateEscolaUserTypeController().handle)
 
 // Escolas Users
+// #escolas-users
 router
   .route("/escolas/users")
   .get(new GetEscolaUsersController().handle)
@@ -284,22 +288,27 @@ router
   .route("/escolas/users/professores/login")
   .post(new LoginProfessorEscolaUserController().handle)
 
+// #login
 router
   .route("/escolas/users/login")
   .post(new LoginEscolaUserController().handle)
 
+// #autenticador
 router
   .route("/escolas/users/login/isAuthenticated/:id")
   .get(new IsAuthenticatedEscolaUserController().handle)
 
+// #escolas-users-esqueci-minha-senha
 router
   .route("/escolas/users/forgot_password")
   .post(new ForgotPasswordEscolaUsersController().handle)
 
+// #escolas-users-resetar-minha-senha
 router
   .route("/escolas/users/reset_password")
   .post(new ResetPasswordEscolaUsersController().handle);
 
+// #escolas-users-trocar-minha-senha
 router
   .route("/escolas/users/change_password")
   .put(new ChangePasswordController().handle);
@@ -317,6 +326,7 @@ router
   .delete(new DeleteProfessorController().handle)
 
 // Disciplinas do professor
+// #professor-disciplinas
 router
   .route("/escolas/users/professores/:id/disciplinas")
   .get(new GetProfessorHasDisciplinasByProfessorController().handle)
@@ -325,7 +335,7 @@ router
   .route("/escolas/users/professores/:id/series")
   .get(new GetSeriesProfessorHasDisciplinaTurmaController().handle)
 
-// # professores-aulas
+// #professores-aulas
 router
   .route("/escolas/users/professores/aulas/series/:id_serie/:id_disciplina")
   .get(new GetAulasBySerieDisciplinaProfessorController().handle)
@@ -586,6 +596,7 @@ router
   .delete(new DeleteFavoritoController().handle)
 
 // Conteudos
+// #conteudos
 router
   .route("/conteudos")
   .post(new CreateConteudoController().handle)
@@ -598,12 +609,17 @@ router
   .get(new FindConteudoController().handle)
 
 router
+  .route("/conteudos/:id/:id_serie/:id_disciplina")
+  .get(new FindConteudoBySerieDisciplinaController().handle)
+
+  router
   .route("/conteudos/:id/:id_aluno")
   .get(new FindConteudoByAlunoController().handle)
 
 router
   .route("/escolas/users/professores/:id/conteudos")
   .get(new GetConteudoByProfessorController().handle)
+
 
 router
   .route("/conteudosAluno/:id_aluno/:id_disciplina")

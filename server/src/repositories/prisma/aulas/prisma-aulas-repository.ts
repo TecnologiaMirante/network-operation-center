@@ -143,7 +143,6 @@ export class PrismaAulasRepository implements AulasRepository {
         console.log(Object(conteudo).array_conteudos_base[0])
         
         for (let item of Object(conteudo).array_conteudos_base) {
-          console.log("aqui")
   
           // Removendo o campo da aula caso ela seja nula
           if (item.aula == null) {
@@ -177,18 +176,12 @@ export class PrismaAulasRepository implements AulasRepository {
 
     }
 
-    console.log("chegou aqui antes das atividades")
-
-
     // Buscando as atividades cadastradas
     const atividades = await prisma.atividade.findMany({
       where: {
         id_serie, id_disciplina
        }
     });
-
-    console.log("chegou aqui depois das atividades")
-
 
     return {aulas, conteudos, atividades};
   }
