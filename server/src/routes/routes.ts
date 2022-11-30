@@ -337,7 +337,8 @@ router
 
 // #professores-aulas
 router
-  .route("/escolas/users/professores/aulas/series/:id_serie/:id_disciplina")
+  .route("/conteudo/:id_serie/:id_disciplina")
+  // .route("/escolas/users/professores/aulas/series/:id_serie/:id_disciplina")
   .get(new GetAulasBySerieDisciplinaProfessorController().handle)
 
 // #professores-disciplinas
