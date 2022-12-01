@@ -63,7 +63,7 @@ export class PrismaConteudosRepository implements ConteudosRepository {
       id_serie, id_disciplina
       }
     });
-
+    
     
     // Buscando os conteúdos existentes
     const conteudo = await prisma.conteudo.findFirst({

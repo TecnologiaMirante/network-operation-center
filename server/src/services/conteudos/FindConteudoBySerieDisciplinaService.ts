@@ -63,7 +63,9 @@ export class FindConteudoBySerieDisciplinaService {
       const aulas = [
         {
           name: "aulas",
-          items: Object(conteudo).aulas
+          items: {
+            "array_conteudos":Object(conteudo).aulas
+          }
         },
         {
           name: "conteudos",
@@ -71,11 +73,15 @@ export class FindConteudoBySerieDisciplinaService {
         },
         {
           name: "atividades",
-          items: Object(conteudo).atividades
+          items: {
+            "array_conteudos":Object(conteudo).atividades
+          }
         },
         {
           name: "materiais",
-          items: []
+          items: {
+            "array_conteudos":[]
+          }
         },
       ]
 
