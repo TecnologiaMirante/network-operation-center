@@ -89,23 +89,28 @@ export class PrismaConteudosRepository implements ConteudosRepository {
     Object(conteudo).array_conteudos_base = Object(conteudo).Conteudo_has_itens;
     delete Object(conteudo).Conteudo_has_itens;
 
+
     // Se o array de conteudos não estiver vazio
     if (Object(conteudo).array_conteudos_base.length > 0) {
 
-      console.log(Object(conteudo).array_conteudos_base[0])
-      
       for (let item of Object(conteudo).array_conteudos_base) {
 
         // Removendo o campo da aula caso ela seja nula
         if (item.aula == null) {
           delete item.aula;
-          array_conteudos.push(item)
+
+          Object(item.atividade).type = "atividade";
+
+          array_conteudos.push(item.atividade)
         }
         
         // Removendo o campo da atividade caso ela seja nula
-        else if (item.atividade == null) {
+        if (item.atividade == null) {
           delete item.atividade;
-          array_conteudos.push(item)
+
+          Object(item.aula).type = "aula";
+
+          array_conteudos.push(item.aula)
         }
       }
   
@@ -115,14 +120,15 @@ export class PrismaConteudosRepository implements ConteudosRepository {
 
       // Pegando index do primeiro vídeo
       const index = Object(conteudo).array_conteudos.findIndex((object: any) => {
-        return Object.keys(object)[0] === 'aula';
+        // return Object.keys(object)[0] === 'aula';
+        return Object(object).type === 'aula';
       });
 
       Object(conteudo).first_aula = {
-        id: Object(conteudo).array_conteudos[index].aula.id,
-        file: Object(conteudo).array_conteudos[index].aula.file,
-        progress: Object(conteudo).array_conteudos[index].aula.progress,
-        favorite: Object(conteudo).array_conteudos[index].aula.favorite
+        id: Object(conteudo).array_conteudos[index].id,
+        file: Object(conteudo).array_conteudos[index].file,
+        progress: Object(conteudo).array_conteudos[index].progress,
+        favorite: Object(conteudo).array_conteudos[index].favorite
       }
     }
 

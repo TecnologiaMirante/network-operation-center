@@ -87,7 +87,6 @@ export class FindConteudoBySerieDisciplinaService {
 
       return aulas;
 
-
       return conteudo;
     } catch (err) {
       return err;
