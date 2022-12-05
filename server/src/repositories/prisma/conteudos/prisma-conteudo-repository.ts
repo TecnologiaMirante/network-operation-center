@@ -64,7 +64,6 @@ export class PrismaConteudosRepository implements ConteudosRepository {
       }
     });
     
-    
     // Buscando os conteúdos existentes
     const conteudo = await prisma.conteudo.findFirst({
       where: {
@@ -88,7 +87,6 @@ export class PrismaConteudosRepository implements ConteudosRepository {
     // Percorrendo o array de itens (aulas, atividades)
     Object(conteudo).array_conteudos_base = Object(conteudo).Conteudo_has_itens;
     delete Object(conteudo).Conteudo_has_itens;
-
 
     // Se o array de conteudos não estiver vazio
     if (Object(conteudo).array_conteudos_base.length > 0) {
@@ -118,11 +116,34 @@ export class PrismaConteudosRepository implements ConteudosRepository {
       Object(conteudo).array_conteudos = array_conteudos
       delete Object(conteudo).array_conteudos_base
 
-      // Pegando index do primeiro vídeo
-      const index = Object(conteudo).array_conteudos.findIndex((object: any) => {
-        // return Object.keys(object)[0] === 'aula';
-        return Object(object).type === 'aula';
-      });
+      console.log(array_conteudos)
+      console.log("----------------------------\n\n\n\n")
+
+      let index = 0;
+
+      // Removendo duplicatas
+      for (let item of array_conteudos) {
+        // Verificando para as aulas
+        if (item.type == "aula") {
+
+          // Percorrendo o array de aulas
+          for (let aula of aulas) {
+
+            // Comparando o id da aula do conteudo com o id da aula do array de aulas
+            if (item.id == aula.id) {
+              array_conteudos.splice(array_conteudos.indexOf(item), 1)
+            }
+
+            console.log(array_conteudos)
+          }
+        }
+      }
+
+      // // Pegando index do primeiro vídeo
+      // const index = Object(conteudo).array_conteudos.findIndex((object: any) => {
+      //   // return Object.keys(object)[0] === 'aula';
+      //   return Object(object).type === 'aula';
+      // });
 
       Object(conteudo).first_aula = {
         id: Object(conteudo).array_conteudos[index].id,
