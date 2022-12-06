@@ -6,6 +6,8 @@ interface UpdateAtividadeRequest {
   id: string;
   title?: string;
   thumb?: string;
+  id_serie?: string,
+  id_disciplina?: string
 }
 
 // Service

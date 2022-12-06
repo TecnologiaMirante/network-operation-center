@@ -61,7 +61,10 @@ export class PrismaConteudosRepository implements ConteudosRepository {
    const atividades = await prisma.atividade.findMany({
     where: {
       id_serie, id_disciplina
-      }
+    },
+    orderBy: {
+      title: "asc"
+    }
     });
     
     // Buscando os conteúdos existentes
@@ -116,27 +119,38 @@ export class PrismaConteudosRepository implements ConteudosRepository {
       Object(conteudo).array_conteudos = array_conteudos
       delete Object(conteudo).array_conteudos_base
 
-      console.log(array_conteudos)
-      console.log("----------------------------\n\n\n\n")
-
       let index = 0;
 
       // Removendo duplicatas
-      for (let item of array_conteudos) {
+      for (let item_conteudo of array_conteudos) {
+
         // Verificando para as aulas
-        if (item.type == "aula") {
+        if (item_conteudo.type == "aula") {
 
           // Percorrendo o array de aulas
           for (let aula of aulas) {
 
-            // Comparando o id da aula do conteudo com o id da aula do array de aulas
-            if (item.id == aula.id) {
-              array_conteudos.splice(array_conteudos.indexOf(item), 1)
+            // Comparando o [id da aula do conteudo] com o [id da aula do array de aulas]
+            if (item_conteudo.id == aula.id) {
+              aulas.splice(aulas.indexOf(aula), 1)
             }
-
-            console.log(array_conteudos)
           }
         }
+
+        // Verificando para as aulas
+        if (item_conteudo.type == "atividade") {
+
+          // Percorrendo o array de atividades
+          for (let atividade of atividades) {
+
+            // Comparando o [id da atividade do conteudo] com o [id da atividade do array de atividades]
+            if (item_conteudo.id == atividade.id) {
+              atividades.splice(atividades.indexOf(atividade), 1)
+            }
+          }
+        }
+
+
       }
 
       // // Pegando index do primeiro vídeo

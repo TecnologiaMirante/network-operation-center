@@ -30,8 +30,8 @@ export class GetConteudoByProfessorService {
 
     // Verificando se o conteúdo existe
     if(Object(conteudos).length == 0){
-      // Se não existir, retorna errro
-      return new Error("Conteúdo inexistente");
+      // Se não existir, retorna erro
+      return new Error("Nenhum conteúdo cadastrado!");
     }
 
     // Retornando os dados para o controller
