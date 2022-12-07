@@ -125,7 +125,7 @@ class CreateAtividadeController {
             try {
                 const opcoes = await createManyOpcoesService.execute({
                     array_opcao: item.options
-                })  
+                });  
                 
               } catch (err) {
                 return err;

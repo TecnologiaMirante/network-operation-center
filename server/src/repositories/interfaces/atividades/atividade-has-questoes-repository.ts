@@ -20,6 +20,10 @@ export interface AtividadeHasQuestoesDelete {
     id: string;
 }
 
+export interface AtividadeHasQuestoesDeleteManyByAtividade {
+    id_atividade: string;
+}
+
 export interface AtividadeHasQuestoesUpdate {
     id: string;
     id_questao?: string;
@@ -33,5 +37,6 @@ export interface AtividadeHasQuestoesRepository {
     findQuestoesByAtividade: (data: AtividadeFindQuestoesByAtividade) => Promise<Object | null>;
     updateQuestoesGrade: (data: AtividadeUpdateQuestoesGrade) => Promise<void>;
     delete: (data: AtividadeHasQuestoesDelete) => Promise<void>;
+    deleteManyByAtividade: (data: AtividadeHasQuestoesDeleteManyByAtividade) => Promise<void>;
     update: (data: AtividadeHasQuestoesUpdate) => Promise<void>;
 }

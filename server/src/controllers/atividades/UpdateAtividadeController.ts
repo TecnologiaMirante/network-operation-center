@@ -1,9 +1,7 @@
 import { Request, Response } from "express";
 import { PrismaAtividadesRepository } from "../../repositories/prisma/atividades/prisma-atividades-repository";
 import { PrismaConteudosRepository } from "../../repositories/prisma/conteudos/prisma-conteudo-repository";
-import { CreateAtividadeService } from "../../services/atividades/CreateAtividadeService";
 import { UpdateAtividadeService } from "../../services/atividades/UpdateAtividadeService";
-import { DeleteQuestaoService } from "../../services/questoes/DeleteQuestaoService";
 
 import { PrismaQuestoesRepository } from "../../repositories/prisma/questoes/prisma-questoes-repository";
 import { CreateQuestaoService } from "../../services/questoes/CreateQuestaoService";
@@ -13,6 +11,8 @@ import { CreateManyOpcoesService } from "../../services/opcoes/CreateManyOpcoesS
 
 import { PrismaAtividadeHasQuestoesRepository } from "../../repositories/prisma/atividades/prisma-atividade-has-questoes-repository";
 import { CreateAtividadeHasQuestoesService } from "../../services/atividades/atividade-has-questoes/CreateAtividadeHasQuestoesService";
+import { DeleteManyAtividadeHasQuestoesByAtividadeService } from "../../services/atividades/atividade-has-questoes/DeleteManyAtividadeHasQuestoesByAtividadeService";
+
 
 //         Olá, meu amigo
 // ⠀⠀⠘⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡜⠀⠀⠀
@@ -101,22 +101,58 @@ class UpdateAtividadeController {
     // Dados do corpo da requisição
     const { questions } = req.body;
 
+
+    // Na hora de atualizar as questões da atividade, existem 2 casos
+    // 1 - Trocar a questão
+    // 2 - Editar a questão
+
+    // 1 - Trocar a questão
+    //    - Ele simplesmente exclui o relacionamento entre a atividade e a questão
+    
+    // 2 - Editar a questão
+    //    - Ele edita a questão 👍
+
+
     // A variável "questions" é opcional, portanto, o service seguinte só é chamado caso ela não seja nula
     if (questions && questions.length != 0) {
       
       // Repositório das questões
       const prismaQuestoesRepository = new PrismaQuestoesRepository();    
-      const deleteQuestaoService = new DeleteQuestaoService(prismaQuestoesRepository);
+      const prismaAtividadeHasQuestoesRepository = new PrismaAtividadeHasQuestoesRepository();    
 
-      // Apagando as questões
+      // Service para excluir o relacionamento
+      const deleteManyAtividadeHasQuestoesByAtividadeService = new DeleteManyAtividadeHasQuestoesByAtividadeService(prismaAtividadeHasQuestoesRepository, prismaAtividadesRepository);
+      
+      // Service para excluir o relacionamento entre a atividade e as questões
       try {
-        await deleteQuestaoService.execute({ id })
-        
-        // Instância do service
-        const createQuestaoService = new CreateQuestaoService(prismaQuestoesRepository);
+        const data = await deleteManyAtividadeHasQuestoesByAtividadeService.execute({ id_atividade: id });
+
+        if (data instanceof Error) {
+          return new Error("Erro ao apagar o relacionamento entre a atividade e as questões")
+        }
+        // let questoes_apagas = await delete
+
+      } catch (err) {
+        return new Error("Erro ao buscar as questões desta atividade!")
+      }
+
+      // // Apagando as questões atuais
+      // try {
+      //   let questao_apagada = await deleteQuestaoService.execute({ id: question.id })
     
-        for (let item of questions) {
-    
+      //   if (questao_apagada instanceof Error) {
+      //     return new Error("Erro ao apagar questão")
+      //   }
+      // } catch (err) {
+
+      // }
+
+        try {
+          // Instância do service
+          const createQuestaoService = new CreateQuestaoService(prismaQuestoesRepository);
+      
+          for (let item of questions) {
+            
             try {
                 // Executando o service
                 const questao = await createQuestaoService.execute({
@@ -143,37 +179,43 @@ class UpdateAtividadeController {
                 try {
                     const opcoes = await createManyOpcoesService.execute({
                         array_opcao: item.options
-                    })  
+                    });  
                     
-                  } catch (err) {
-                    return err;
-                  }
-                  
+                } catch (err) {
+                  return err;
+                }
+                
                 // 4 - RELACIONANDO A QUESTÃO COM A ATIVIDADE
     
                 // Repositório do atividade_has_questões
                 const prismaAtividadeHasQuestoesRepository = new PrismaAtividadeHasQuestoesRepository();    
     
                 // Instância do service
-                const atividadeHasQuestoes = new CreateAtividadeHasQuestoesService(prismaAtividadesRepository, prismaQuestoesRepository, prismaAtividadeHasQuestoesRepository);
-    
+                const createAtividadeHasQuestoes = new CreateAtividadeHasQuestoesService(prismaAtividadesRepository, prismaQuestoesRepository, prismaAtividadeHasQuestoesRepository);
+                
                 try {
-                  await atividadeHasQuestoes.execute({
+                  let atividadehasQuestoes = await createAtividadeHasQuestoes.execute({
                     id_atividade: Object(atividade).id,
                     id_questao: Object(questao).id
                   })
+  
+                  if (atividadehasQuestoes instanceof Error) {
+                    return new Error("Erro ao relacionar as questões da atividade!");
+                  }
+  
                 } catch (err) {
                   return err;
                 }
     
-            } catch (err) {
-                return err;
-            }
+              } catch (err) {
+                  return err;
+              }
+          }
+  
+        } catch (err) {
+          return new Error("Erro ao deletar questão");
         }
 
-      } catch (err) {
-        return new Error("Erro ao deletar questão");
-      }
     }
     
     // Retornando mensagem de sucesso para o usuário

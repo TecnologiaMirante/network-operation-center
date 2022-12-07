@@ -22,7 +22,7 @@ export class CreateAtividadeHasQuestoesService {
   async execute(request: CreateAtividadeHasQuestoesRequest) {
     
     // Dados do service
-    const { id_questao, id_atividade } = request;
+    const { id_atividade, id_questao } = request;
 
     // Verificando se a atividade existe
     if(!(await this.atividadesRepository.find({id: id_atividade}))) {
@@ -41,7 +41,7 @@ export class CreateAtividadeHasQuestoesService {
     })
     
     // Atualizando o valor das questões
-    await this.atividadeHasQuestoesRepository.updateQuestoesGrade({ id_atividade });
+    return await this.atividadeHasQuestoesRepository.updateQuestoesGrade({ id_atividade });
 
     // return atividade;
   }

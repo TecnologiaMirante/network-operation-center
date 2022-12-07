@@ -1,5 +1,5 @@
 import { prisma } from "../../../prisma";
-import { AtividadeHasQuestoesCreateData, AtividadeHasQuestoesRepository, AtividadeHasQuestoesFind, AtividadeHasQuestoesDelete, AtividadeHasQuestoesUpdate, AtividadeFindQuestoesByAtividade, AtividadeUpdateQuestoesGrade } from "../../interfaces/atividades/atividade-has-questoes-repository";
+import { AtividadeHasQuestoesCreateData, AtividadeHasQuestoesRepository, AtividadeHasQuestoesFind, AtividadeHasQuestoesDelete, AtividadeHasQuestoesUpdate, AtividadeFindQuestoesByAtividade, AtividadeUpdateQuestoesGrade, AtividadeHasQuestoesDeleteManyByAtividade } from "../../interfaces/atividades/atividade-has-questoes-repository";
 
 export class PrismaAtividadeHasQuestoesRepository implements AtividadeHasQuestoesRepository {
 
@@ -95,6 +95,14 @@ export class PrismaAtividadeHasQuestoesRepository implements AtividadeHasQuestoe
     await prisma.atividade_has_questao.delete({
       where: {
         id,
+      }
+    });
+  }
+
+  async deleteManyByAtividade({ id_atividade }: AtividadeHasQuestoesDeleteManyByAtividade) {
+    await prisma.atividade_has_questao.deleteMany({
+      where: {
+        id_atividade,
       }
     });
   }

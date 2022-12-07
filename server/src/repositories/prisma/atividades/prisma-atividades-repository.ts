@@ -1,5 +1,5 @@
 import { prisma } from "../../../prisma";
-import { AtividadeCreateData, AtividadesRepository, AtividadeFind, AtividadeDelete, AtividadeUpdate, AtividadeGetQuestoes, AtividadeFindEssentialData, AtividadeGetByDisciplinas } from "../../interfaces/atividades/atividades-repository";
+import { AtividadeCreateData, AtividadesRepository, AtividadeFind, AtividadeDelete, AtividadeUpdate, AtividadeGetQuestoes, AtividadeFindEssentialData, AtividadeGetByDisciplinas, AtividadeGetQuestoesID } from "../../interfaces/atividades/atividades-repository";
 
 export class PrismaAtividadesRepository implements AtividadesRepository {
 
@@ -162,6 +162,35 @@ export class PrismaAtividadesRepository implements AtividadesRepository {
     return questoes_final;
   }
 
+  async getQuestoesID({ id }: AtividadeGetQuestoesID) {
+    const questoes = await prisma.atividade_has_questao.findMany({
+      where: {
+        id_atividade: id
+      },
+      select: {
+        questao: {
+          select: {
+            id: true,
+          }
+        }
+      }
+    });
+
+    console.log(questoes)
+
+    // Criando um array para colocar a descrição de cada opção em um array
+    
+    let questoes_final = [];
+    
+    // Percorrendo o array das questões para verificar qual resposta é a correta
+    for (let questao_ of Object(questoes)) {
+      
+      questoes_final.push(questao_.questao.id)
+    }
+    
+    return questoes_final;
+  }
+
   async getByDisciplina({ id_disciplina }: AtividadeGetByDisciplinas) {
     const atividades_base = await prisma.atividade.findMany({
       where: {
@@ -199,7 +228,7 @@ export class PrismaAtividadesRepository implements AtividadesRepository {
   }
 
   async update({ id, title, thumb, id_disciplina, id_serie }: AtividadeUpdate) {
-    await prisma.atividade.update({
+    return await prisma.atividade.update({
       where: {
         id
       },

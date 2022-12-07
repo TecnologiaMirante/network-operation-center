@@ -1,5 +1,5 @@
 import { prisma } from "../../../prisma";
-import { QuestaoCreateData, QuestoesRepository, QuestaoFind, QuestaoDelete, QuestaoUpdate } from "../../interfaces/questoes/questoes-repository";
+import { QuestaoCreateData, QuestoesRepository, QuestaoFind, QuestaoDelete, QuestaoUpdate, QuestaoDeleteManyByAtividade, QuestaoDeleteMany } from "../../interfaces/questoes/questoes-repository";
 
 export class PrismaQuestoesRepository implements QuestoesRepository {
 
@@ -41,6 +41,23 @@ export class PrismaQuestoesRepository implements QuestoesRepository {
       }
     });
   }
+
+  async deleteMany({ data }: QuestaoDeleteMany) {
+
+    
+
+    await prisma.atividade_has_questao.deleteMany({})
+  }
+
+  async deleteManyByAtividade({ id_atividade }: QuestaoDeleteManyByAtividade) {
+    await prisma.questao.deleteMany({
+      where: {
+        Atividade_has_questao: {
+          
+        }
+      }
+    })
+  };
 
   async update({ id, title, question_type, grade, difficulty, id_disciplina }: QuestaoUpdate) {
     await prisma.questao.update({
