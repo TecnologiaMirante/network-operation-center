@@ -1,5 +1,5 @@
 import { prisma } from "../../../prisma";
-import { OpcaoCreateData, OpcoesRepository, OpcaoFind, OpcaoDelete, OpcaoUpdate, OpcaoCreateMany } from "../../interfaces/opcoes/opcoes-repository";
+import { OpcaoCreateData, OpcoesRepository, OpcaoFind, OpcaoDelete, OpcaoUpdate, OpcaoCreateMany, OpcaoDeleteMany } from "../../interfaces/opcoes/opcoes-repository";
 
 export class PrismaOpcoesRepository implements OpcoesRepository {
 
@@ -14,7 +14,7 @@ export class PrismaOpcoesRepository implements OpcoesRepository {
   };
 
   async createMany( { data }: OpcaoCreateMany ) {
-    await prisma.opcao.createMany({
+    return await prisma.opcao.createMany({
       data,
     })
   };
@@ -39,6 +39,14 @@ export class PrismaOpcoesRepository implements OpcoesRepository {
     await prisma.opcao.delete({
       where: {
         id,
+      }
+    });
+  }
+
+  async deleteMany({ id_questao }: OpcaoDeleteMany) {
+    await prisma.opcao.deleteMany({
+      where: {
+        id_questao,
       }
     });
   }

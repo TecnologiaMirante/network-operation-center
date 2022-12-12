@@ -49,5 +49,5 @@ export interface QuestoesRepository {
     delete: (data: QuestaoDelete) => Promise<void>;
     deleteMany: (data: QuestaoDeleteMany) => Promise<void>;
     deleteManyByAtividade: (data: QuestaoDeleteManyByAtividade) => Promise<void>;
-    update: (data: QuestaoUpdate) => Promise<void>;
+    update: (data: QuestaoUpdate) => Promise<Object>;
 }

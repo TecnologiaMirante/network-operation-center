@@ -62,7 +62,6 @@ export class PrismaAtividadesRepository implements AtividadesRepository {
       questoes.push(Object.values(questao)[0])
     }
 
-    
     // Percorrendo o array das questões para verificar qual resposta é a correta
     for (let questao of questoes) {
       // Criando um array para colocar a descrição de cada opção em um array
@@ -175,8 +174,6 @@ export class PrismaAtividadesRepository implements AtividadesRepository {
         }
       }
     });
-
-    console.log(questoes)
 
     // Criando um array para colocar a descrição de cada opção em um array
     

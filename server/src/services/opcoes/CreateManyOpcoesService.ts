@@ -23,7 +23,7 @@ export class CreateManyOpcoesService {
 
   // Executando o service
   async execute(request: CreateManyOpcoesRequest) {
-    
+
     // Dados do service 
     const { array_opcao } = request;
 
@@ -33,14 +33,13 @@ export class CreateManyOpcoesService {
         // Se a questão não existir
         return new Error("Questão inexistente!");
       }
-
-
+      
     } catch (err) {
       return err;
     }
-
+    
     // Criando ...
-    await this.opcoesRepository.createMany({
+    return await this.opcoesRepository.createMany({
       data: array_opcao
     })
   }

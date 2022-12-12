@@ -32,9 +32,8 @@ export class UpdateQuestaoService {
         return new Error("Por favor, insira os campos obrigatórios!");
       }
     }
-
     // Criando ...
-    await this.questoesRepository.update({
+    return await this.questoesRepository.update({
       id,
       title,
       question_type,

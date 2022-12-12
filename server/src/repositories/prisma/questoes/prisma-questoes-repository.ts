@@ -44,8 +44,6 @@ export class PrismaQuestoesRepository implements QuestoesRepository {
 
   async deleteMany({ data }: QuestaoDeleteMany) {
 
-    
-
     await prisma.atividade_has_questao.deleteMany({})
   }
 
@@ -60,7 +58,7 @@ export class PrismaQuestoesRepository implements QuestoesRepository {
   };
 
   async update({ id, title, question_type, grade, difficulty, id_disciplina }: QuestaoUpdate) {
-    await prisma.questao.update({
+    return await prisma.questao.update({
       where: {
         id
       },

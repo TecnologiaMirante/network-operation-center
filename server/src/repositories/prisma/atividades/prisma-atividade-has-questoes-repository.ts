@@ -1,5 +1,5 @@
 import { prisma } from "../../../prisma";
-import { AtividadeHasQuestoesCreateData, AtividadeHasQuestoesRepository, AtividadeHasQuestoesFind, AtividadeHasQuestoesDelete, AtividadeHasQuestoesUpdate, AtividadeFindQuestoesByAtividade, AtividadeUpdateQuestoesGrade, AtividadeHasQuestoesDeleteManyByAtividade } from "../../interfaces/atividades/atividade-has-questoes-repository";
+import { AtividadeHasQuestoesCreateData, AtividadeHasQuestoesRepository, AtividadeHasQuestoesFind, AtividadeHasQuestoesDelete, AtividadeHasQuestoesUpdate, AtividadeFindQuestoesByAtividade, AtividadeUpdateQuestoesGrade, AtividadeHasQuestoesDeleteManyByAtividade, AtividadeHasQuestoesDeleteQuestao, AtividadeHasQuestoesFindByQuestao } from "../../interfaces/atividades/atividade-has-questoes-repository";
 
 export class PrismaAtividadeHasQuestoesRepository implements AtividadeHasQuestoesRepository {
 
@@ -22,6 +22,18 @@ export class PrismaAtividadeHasQuestoesRepository implements AtividadeHasQuestoe
       {
         where: {
           id
+        },
+      }
+    );
+    return atividadeHasQuestao;
+  }
+  
+  async findByQuestao({ id, id_questao }: AtividadeHasQuestoesFindByQuestao) {
+    const atividadeHasQuestao = await prisma.atividade_has_questao.findFirst(
+      {
+        where: {
+          id,
+          id_questao
         },
       }
     );
@@ -95,6 +107,22 @@ export class PrismaAtividadeHasQuestoesRepository implements AtividadeHasQuestoe
     await prisma.atividade_has_questao.delete({
       where: {
         id,
+      }
+    });
+  }
+
+  async deleteQuestao({ id, id_questao }: AtividadeHasQuestoesDeleteQuestao) {
+
+    const rel = await prisma.atividade_has_questao.findFirst({
+      where: {
+        id,
+        id_questao
+      }
+    })
+
+    await prisma.atividade_has_questao.delete({
+      where: {
+        id: Object(rel).id,
       }
     });
   }

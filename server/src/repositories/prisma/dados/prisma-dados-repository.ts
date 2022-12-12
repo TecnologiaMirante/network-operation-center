@@ -43,11 +43,11 @@ export class PrismaDadosRepository implements DadosRepository {
 
                 soma = item.Media.reduce((partialSum, a) => partialSum + a.value, 0);
                 num = item.Media.length
-                Object(item).media = soma/num;
+                Object(item).media = parseFloat((soma/num).toFixed(2));
 
                 media_geral = media_geral + (soma/num)
-                
-                // media_geral = ((media_geral + (soma/num)) * 100) / 100
+
+                media_geral = parseFloat(media_geral.toFixed(2));
 
             } else {
                 Object(item).media = 0
@@ -114,9 +114,10 @@ export class PrismaDadosRepository implements DadosRepository {
 
                 soma = item.Media.reduce((partialSum, a) => partialSum + a.value, 0);
                 num = item.Media.length
-                Object(item).media = soma/num;
+                Object(item).media = parseFloat((soma/num).toFixed(2));
 
                 media_geral = media_geral + (soma/num)
+                media_geral = parseFloat(media_geral.toFixed(2));
                 
                 // media_geral = ((media_geral + (soma/num)) * 100) / 100
 
@@ -188,9 +189,10 @@ export class PrismaDadosRepository implements DadosRepository {
 
                 soma = item.Media.reduce((partialSum, a) => partialSum + a.value, 0);
                 num = item.Media.length
-                Object(item).media = soma/num;
+                Object(item).media = parseFloat((soma/num).toFixed(2));
 
                 media_geral = media_geral + (soma/num)
+                media_geral = parseFloat(media_geral.toFixed(2));
 
             } else {
                 Object(item).media = 0
@@ -285,7 +287,9 @@ export class PrismaDadosRepository implements DadosRepository {
             total_atividades_realizadas = total_atividades_realizadas + item.Aluno_responde_atividade.length;
     
             if (item.Media.length > 0) {
-                Object(item).media = item.Media[0].value;
+                Object(item).media = parseFloat((item.Media[0].value).toFixed(2));
+                // Object(item).media = parseFloat((soma/num).toFixed(2));
+
                 soma = soma + item.Media[0].value;
                 num = num + 1;
             } else {
