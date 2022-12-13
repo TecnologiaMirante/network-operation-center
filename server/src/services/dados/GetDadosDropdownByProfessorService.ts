@@ -25,7 +25,8 @@ export class GetDadosDropdownByProfessorService {
 
     try {
         // Buscando os dados
-        const dados = await this.dadosDropdownRepository.dropdownGetByProfessor({ id_professor });
+        const dados = await this.dadosDropdownRepository.dropdownTodos({ id_professor });
+        // const dados = await this.dadosDropdownRepository.dropdownGetByProfessor({ id_professor });
 
         // Caso não existam no sistema, retorna erro
         if (Object.keys(dados).length == 0) {

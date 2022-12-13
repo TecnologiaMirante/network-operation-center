@@ -35,6 +35,7 @@ export interface DadosDropdownRepository {
     // get: () => Promise<Object>;
     // find: (data: DadosFind) => Promise<Object | null>;
     dropdownGetByProfessor: (data: DadosDropdownGetByProfessor) => Promise<Object>;
+    dropdownTodos: (data: DadosDropdownGetByProfessor) => Promise<Object>;
     // delete: (data: DadosDelete) => Promise<void>;
     // update: (data: DadosUpdate) => Promise<void>;
 }
