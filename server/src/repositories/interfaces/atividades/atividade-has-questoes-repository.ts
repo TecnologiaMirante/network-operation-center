@@ -9,7 +9,7 @@ export interface AtividadeHasQuestoesFind {
 }
 
 export interface AtividadeHasQuestoesFindByQuestao {
-    id: string;
+    id_atividade: string;
     id_questao: string;
 }
 

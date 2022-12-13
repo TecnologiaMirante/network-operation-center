@@ -28,11 +28,11 @@ export class PrismaAtividadeHasQuestoesRepository implements AtividadeHasQuestoe
     return atividadeHasQuestao;
   }
   
-  async findByQuestao({ id, id_questao }: AtividadeHasQuestoesFindByQuestao) {
+  async findByQuestao({ id_atividade, id_questao }: AtividadeHasQuestoesFindByQuestao) {
     const atividadeHasQuestao = await prisma.atividade_has_questao.findFirst(
       {
         where: {
-          id,
+          id_atividade,
           id_questao
         },
       }

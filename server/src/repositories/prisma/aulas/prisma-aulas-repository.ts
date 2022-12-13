@@ -140,7 +140,7 @@ export class PrismaAulasRepository implements AulasRepository {
       // Se o array de conteudos não estiver vazio
       if (Object(conteudo).array_conteudos_base.length > 0) {
   
-        console.log(Object(conteudo).array_conteudos_base[0])
+        // console.log(Object(conteudo).array_conteudos_base[0])
         
         for (let item of Object(conteudo).array_conteudos_base) {
   

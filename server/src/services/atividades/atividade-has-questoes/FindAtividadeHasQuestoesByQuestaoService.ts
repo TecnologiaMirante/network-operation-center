@@ -2,7 +2,7 @@ import { AtividadeHasQuestoesRepository } from "../../../repositories/interfaces
 
 // Interface
 interface FindAtividadeHasQuestoesByQuestaoRequest {
-  id: string;
+  id_atividade: string;
   id_questao: string;
 }
 
@@ -18,11 +18,11 @@ export class FindAtividadeHasQuestoesByQuestaoService {
   async execute(request: FindAtividadeHasQuestoesByQuestaoRequest) {
     
     // Dados do service
-    const { id, id_questao } = request;
+    const { id_atividade, id_questao } = request;
 
     // Buscando ...
     const atividade = await this.atividadeHasQuestoesRepository.findByQuestao({
-      id,
+      id_atividade,
       id_questao
     })
 

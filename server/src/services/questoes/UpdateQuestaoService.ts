@@ -23,6 +23,7 @@ export class UpdateQuestaoService {
   // Executando o service
   async execute(request: UpdateQuestaoRequest) {
     
+
     // Dados do service
     const { id, title, question_type, grade, difficulty, id_disciplina } = request;
 
@@ -32,6 +33,7 @@ export class UpdateQuestaoService {
         return new Error("Por favor, insira os campos obrigatórios!");
       }
     }
+
     // Criando ...
     return await this.questoesRepository.update({
       id,

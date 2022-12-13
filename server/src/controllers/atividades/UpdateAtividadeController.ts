@@ -16,6 +16,7 @@ import { PrismaAtividadeHasQuestoesRepository } from "../../repositories/prisma/
 import { CreateAtividadeHasQuestoesService } from "../../services/atividades/atividade-has-questoes/CreateAtividadeHasQuestoesService";
 import { FindAtividadeHasQuestoesByQuestaoService } from "../../services/atividades/atividade-has-questoes/FindAtividadeHasQuestoesByQuestaoService";
 import { DeleteManyAtividadeHasQuestoesByAtividadeService } from "../../services/atividades/atividade-has-questoes/DeleteManyAtividadeHasQuestoesByAtividadeService";
+import { DeleteAtividadeHasQuestoesService } from "../../services/atividades/atividade-has-questoes/DeleteAtividadeHasQuestoesService";
 
 import { PrismaDisciplinasRepository } from "../../repositories/prisma/disciplinas/prisma-disciplinas-repository";
 import { DeleteQuestaoService } from "../../services/questoes/DeleteQuestaoService";
@@ -54,21 +55,38 @@ import { DeleteQuestaoService } from "../../services/questoes/DeleteQuestaoServi
 // ⣿⣿⣿⣿⠿⠛⠉⠉⠁⠀⢻⣿⡇⠀⠀⠀⠀⠀⠀⢀⠈⣿⣿⡿⠉⠛⠛⠛⠉⠉
 // ⣿⡿⠋⠁⠀⠀⢀⣀⣠⡴⣸⣿⣇⡄⠀⠀⠀⠀⢀⡿⠄⠙⠛⠀⣀⣠⣤⣤⠄⠀
 
-// # Funcionamento do código
-// Serão chamados vários Services:
-//
-//  1 - "Create Atividade", para criar a atividade com dados básicos, que são:
-//      * title, description, thumb, id_serie, id_disciplina
-//  2 - "Create Questão", para criar uma questão:
-//      * title, question_type, grade, difficulty, id_disciplina
-//  3 - "Create Opção", para criar as opções de uma questão:
-//      * descripition, is_correct, id_questao
-//  4 - "Create Atividade_has_Questões", criar o relacionamento entre as atividades e as questões
-//      * id_atividade, id_questao
+// # Funcionamento básico da Atualização da atividade:
+// 
+// É possível atualizar a atividade através das seguintes ações:
+// 1- Atualizar as informações básicas da atividade (title, etc ...)
+// 2- Adicionar questões
+// 3- Remover questões
+// 4- Editar as questões
 
-// MENSAGEM PARA O NETO DO FUTURO:
-//  ele não ta retornando o json
-// verificar aonde retornar
+// PONTOS IMPORTANTES
+// Existem 3 tabelas principais envolvidas neste Service:
+//    - Atividade
+//    - Questao
+//    - Opcao
+
+// Existem tabelas secundárias
+//    - Atividade_has_questao | responsável por relacionar a atividade com as suas várias questões
+
+// Descrição das ações
+//    1- Atualizar informações básicas
+//        - Pega as informações vindas do controller e atualiza a atividade.
+//
+//    2- Adicionar questão
+//        - Uma nova questão é criada
+//        - Seu relacionamento é criado com a atividade atual
+//
+//    3- Remover questão
+//        - Seu relacionamento com a atividade atual é excluído
+//
+//    4- Editar a questão
+//        - Atualiza as informações da questão
+
+// ... A descrição técnica de cada ação está descrita em sua respectiva seção ...
 
 class UpdateAtividadeController {
   async handle(req:Request, res:Response) {
@@ -103,6 +121,8 @@ class UpdateAtividadeController {
         return res.status(400).send(atividade.message);
     }
 
+    // BUSCANDO ATIVIDADE RECÉM ATUALIZADA COM OS DADOS BÁSICOS (SEM QUESTÕES) ============================================================================================
+
     // Service de buscar a atividade com as questões
     const findAtividadeService = new FindAtividadeService(prismaAtividadesRepository);
 
@@ -110,26 +130,32 @@ class UpdateAtividadeController {
     const atividade_atualizada = await findAtividadeService.execute({id})
     
     // Salvando as questões em uma variável própria
-    const questoes = Object(atividade_atualizada).questoes;
+    const questoes_antigas = Object(atividade_atualizada).questoes;
 
-    // 2 - VERIFICANDO AS QUESTÕES ================================================================================================================
+    // 2 - VERIFICANDO AS QUESTÕES VINDAS DA REQUISIÇÃO ================================================================================================
     
     // Dados do corpo da requisição
-    const { questions } = req.body;
+    // const { questions } = req.body;
+    const questoes_novas = req.body.questions;
 
-    // Na hora de atualizar as questões da atividade, existem 2 casos
+    // Na hora de atualizar as questões da atividade, existem 3 casos
     // 1 - Editar a questão
-    // 2 - Trocar a questão
+    // 2 - Colocar questões que não existem
+    // 3 - Remover questões que já existem
     
     // 1 - Editar a questão
     //    - Ele edita a questão 👍
 
-    // 2 - Trocar a questão
-    //    - Ele simplesmente exclui o relacionamento entre a atividade e a questão atual
-    //    - Cria um relacionamento da nova questão e a atividade
+    // 2 - Colocar questão que não existe
+    //    - Cria a questão
+    //    - Relaciona a mesma com a atividade
+
+    // 3 - Remove questão que já existe
+    //    - Compara as questões vindas da requisição com as já existentes
+    //    - A questão que existir no array das existentes, porém estiver faltando no array das vindas da requisição, seu relacionamento é excluído
 
     // A variável "questions" é opcional, portanto, o service seguinte só é chamado caso ela não seja nula
-    if (questions && questions.length != 0) {
+    if (questoes_novas && questoes_novas.length != 0) {
       
       // Array com as questões válidas
       let array_questoes_existentes = [];
@@ -139,24 +165,28 @@ class UpdateAtividadeController {
       // Repositório das questões
       const prismaQuestoesRepository = new PrismaQuestoesRepository();    
 
-      // Percorrendo as questões
-      for (let question of questions) {
+      // Percorrendo as questões novas vindas da requisição
+      for (let question of questoes_novas) {
 
         // Verificando se a questão tem id
         if (question.id) {
 
-          // Se tiver, somente atualiza ela
+          // Se tiver, é porque ela já existe, então somente atualiza ela
+
+          // Repositório das disciplinas
           const prismaDisciplinasRepository = new PrismaDisciplinasRepository();
 
-          // Executando as antigas opções
+          // Service para excluir as antigas opções
           const deleteManyOpcoesByQuestaoService = new DeleteManyOpcoesByQuestaoService(prismaOpcoesRepository);
           
-          const updateQuestaoService = new UpdateQuestaoService(prismaQuestoesRepository, prismaDisciplinasRepository);
-
           // Apagando as antigas opções
           const opcoes_apagadas = await deleteManyOpcoesByQuestaoService.execute({ id_questao: question.id })
 
+          // Service para atualizar a questão
+          const updateQuestaoService = new UpdateQuestaoService(prismaQuestoesRepository, prismaDisciplinasRepository);
+
           try {
+            // Atualizando a questão
             const questaoAtualizada = await updateQuestaoService.execute({
               id: question.id,
               title: question.title_question,
@@ -170,17 +200,19 @@ class UpdateAtividadeController {
               return new Error("Erro ao atualizar questão!");
             }
 
-            // Adicionando no array de questões
+            // Adicionando no array de questões existentes
             array_questoes_existentes.push(question.id);
 
             // ATUALIZANDO AS OPÇÕES DA QUESTÃO
             // Instância do service
             const createManyOpcoesService = new CreateManyOpcoesService(prismaOpcoesRepository, prismaQuestoesRepository);
       
+            // Adicionando o id da questão nas opções para o tipo de dado que o service aceita
             for (let item of question.options) {
               item.id_questao = question.id;
             }
 
+            // Criando as opções
             try {
               const opcoes = await createManyOpcoesService.execute({
                   array_opcao: question.options
@@ -197,72 +229,68 @@ class UpdateAtividadeController {
           } catch (err) {
             return err;
           }
+
         } 
 
         // Se não tiver, ele cria a questão com o relacionamento entre a questão e a atividade
         else {
-
           try {
             // Instância do service
             const createQuestaoService = new CreateQuestaoService(prismaQuestoesRepository);
         
-            for (let item of questions) {
+            try {
+              // Executando o service
+              const questao = await createQuestaoService.execute({
+                  title: question.title_question,
+                  question_type: question.question_type,
+                  id_disciplina,
+                  grade: 10,
+                  difficulty: "normal"
+              })
+  
+              // 3 - CRIANDO AS OPÇÕES =====================================================================================================
+
+              const prismaQuestoesRepository = new PrismaQuestoesRepository();    
+
+              // Instância do service
+              const createManyOpcoesService = new CreateManyOpcoesService(prismaOpcoesRepository, prismaQuestoesRepository);
+  
+              for (let item1 of question.options) {
+                  item1.id_questao = Object(questao).id;
+              }
+  
+              try {
+                  const opcoes = await createManyOpcoesService.execute({
+                      array_opcao: question.options
+                  });  
+                  
+              } catch (err) {
+                return err;
+              }
+              
+              // 4 - RELACIONANDO A QUESTÃO COM A ATIVIDADE
+  
+              // Repositório do atividade_has_questões
+              const prismaAtividadeHasQuestoesRepository = new PrismaAtividadeHasQuestoesRepository();    
+  
+              // Instância do service
+              const createAtividadeHasQuestoes = new CreateAtividadeHasQuestoesService(prismaAtividadesRepository, prismaQuestoesRepository, prismaAtividadeHasQuestoesRepository);
               
               try {
-                  // Executando o service
-                  const questao = await createQuestaoService.execute({
-                      title: item.title_question,
-                      question_type: item.question_type,
-                      id_disciplina,
-                      grade: 10,
-                      difficulty: "normal"
-                  })
-      
-                  // 3 - CRIANDO AS OPÇÕES =====================================================================================================
+                let atividadehasQuestoes = await createAtividadeHasQuestoes.execute({
+                  id_atividade: Object(atividade).id,
+                  id_questao: Object(questao).id
+                })
 
-                  const prismaQuestoesRepository = new PrismaQuestoesRepository();    
-
-                  // Instância do service
-                  const createManyOpcoesService = new CreateManyOpcoesService(prismaOpcoesRepository, prismaQuestoesRepository);
-      
-                  for (let item1 of item.options) {
-                      item1.id_questao = Object(questao).id;
-                  }
-      
-                  try {
-                      const opcoes = await createManyOpcoesService.execute({
-                          array_opcao: item.options
-                      });  
-                      
-                  } catch (err) {
-                    return err;
-                  }
-                  
-                  // 4 - RELACIONANDO A QUESTÃO COM A ATIVIDADE
-      
-                  // Repositório do atividade_has_questões
-                  const prismaAtividadeHasQuestoesRepository = new PrismaAtividadeHasQuestoesRepository();    
-      
-                  // Instância do service
-                  const createAtividadeHasQuestoes = new CreateAtividadeHasQuestoesService(prismaAtividadesRepository, prismaQuestoesRepository, prismaAtividadeHasQuestoesRepository);
-                  
-                  try {
-                    let atividadehasQuestoes = await createAtividadeHasQuestoes.execute({
-                      id_atividade: Object(atividade).id,
-                      id_questao: Object(questao).id
-                    })
-    
-                    if (atividadehasQuestoes instanceof Error) {
-                      return new Error("Erro ao relacionar as questões da atividade!");
-                    }
-    
-                  } catch (err) {
-                    return err;
-                  }
-      
-                } catch (err) {
-                    return err;
+                if (atividadehasQuestoes instanceof Error) {
+                  return new Error("Erro ao relacionar as questões da atividade!");
                 }
+
+              } catch (err) {
+                return err;
+              }
+            } catch (err) {
+                return err;
             }
     
           } catch (err) {
@@ -271,21 +299,47 @@ class UpdateAtividadeController {
         }
       }
 
-      // Agora pensando na seguinte situação:
-      // Tinham as questões A e B
-      // Porém agora vai ser só A
-      // O array antigo (questions) era A, B
-      // O novo (array_questoes_validas) é A
-      // O que tem no novo, que havia no antigo continua
-      // O que tem no novo, mas não havia no antigo, o antigo some
+      // REMOVENDO QUESTÕES =================================================================================================================================
 
-      let existe = 1;
+      // Comparar as questões vindas da requisição (questoes_novas) com as existentes (questoes_antigas)
+      // A que existir em "questoes_antigas", mas não existir em "questoes_novas", será excluída
 
-      for (let questao of questions) {
-        if (questao != )
+      const prismaAtividadeHasQuestoesRepository = new PrismaAtividadeHasQuestoesRepository();
+
+      const findAtividadeHasQuestoesByQuestaoService = new FindAtividadeHasQuestoesByQuestaoService(prismaAtividadeHasQuestoesRepository);
+
+      const deleteAtividadeHasQuestoesService = new DeleteAtividadeHasQuestoesService(prismaAtividadeHasQuestoesRepository);
+
+      for (let questao_antiga of questoes_antigas) {
+
+        // Verificando se a questão antiga está no array das novas
+        let index = questoes_novas.findIndex((val: { id: any; }) => val.id == questao_antiga.id)
+
+        // Se o index for menor que 0, é porque ele não está
+        if (index < 0) {
+          // Buscando o relacionamento entre a atividade e a questão
+          const relacionamento = await findAtividadeHasQuestoesByQuestaoService.execute({id_atividade: id, id_questao: questao_antiga.id})
+
+          if (relacionamento instanceof Error) {
+            return new Error("Erro ao buscar relacionamento entre atividade e a questão que será removida do relacionamento!");
+          }
+
+          const deletado = await deleteAtividadeHasQuestoesService.execute({id: Object(relacionamento).id })
+
+          if (deletado instanceof Error) {
+            return new Error("Erro ao deletar relacionamento entre a atividade e a questão antiga");
+          }
+
+        }
+
       }
+    }
 
-      console.log(array_questoes_existentes)
+    const prismaAtividadeHasQuestoesRepository = new PrismaAtividadeHasQuestoesRepository();
+
+    if (questoes_novas.length == 0) {
+      const deleteManyAtividadeHasQuestoesByAtividadeService = new DeleteManyAtividadeHasQuestoesByAtividadeService(prismaAtividadeHasQuestoesRepository, prismaAtividadesRepository);
+      await deleteManyAtividadeHasQuestoesByAtividadeService.execute({ id_atividade: id })
     }
     
     // Retornando mensagem de sucesso para o usuário
