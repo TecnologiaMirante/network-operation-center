@@ -335,9 +335,37 @@ export class PrismaDadosDropdownRepository implements DadosDropdownRepository {
                     let num = 0;
                     let total_atividades_realizadas = 0;
                     let total_aulas_assistidas = 0;
+                    let total_tempo_aula = 0;
+                    let total_tempo_atividade = 0;
                 
                     // Organizando os dados
                     for (let item of bimestres) {
+
+                        // Verificando se existe progresso em aula
+                        if (item.Progresso.length > 0) {
+
+                            // Percorrendo o array de progresso
+                            for (let progress of item.Progresso) {
+
+                                // Obtendo o total de progresso por aluno
+                                total_tempo_aula = total_tempo_aula + progress.progress;
+                            }
+                        }
+
+                        // Verificando se existe atividade respondida
+                        if (item.Aluno_responde_atividade.length > 0) {
+
+                            // Percorrendo o array de atividades respondidas
+                            for (let resposta of item.Aluno_responde_atividade) {
+
+                                // Obtendo o total de tempo nas atividades
+                                total_tempo_atividade = total_tempo_atividade + resposta.time;
+                            }
+                        }
+                        
+                        // Object(item).total_tempo_atividade = total_tempo_atividade;
+                        // Object(item).tempo_atividade = tempo_aula;
+
                         Object(item).aulas_assistidas = item.Progresso.length;
                         total_aulas_assistidas = total_aulas_assistidas + item.Progresso.length;
                 
@@ -381,8 +409,11 @@ export class PrismaDadosDropdownRepository implements DadosDropdownRepository {
                     // }
 
                     Object(aluno).media_geral = media_geral;
-                    Object(aluno).total_atividades_realizadas;
-                    Object(aluno).total_aulas_assistidas;
+                    Object(aluno).total_atividades_realizadas = total_atividades_realizadas;
+                    Object(aluno).total_tempo_atividade = total_tempo_atividade;
+                    Object(aluno).total_aulas_assistidas = total_aulas_assistidas;
+                    Object(aluno).total_tempo_aula = total_tempo_aula;
+                    Object(aluno).total_atividades_realizadas = total_atividades_realizadas;
                     Object(aluno).b1 = bimestres[0];
                     Object(aluno).b2 = bimestres[1];
                     Object(aluno).b3 = bimestres[2];
