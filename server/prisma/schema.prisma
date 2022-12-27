@@ -103,6 +103,7 @@ model EscolaUser {
   Type_has_permissao_custom Type_has_permissao_custom[]
   Professor                 Professor[]
   Aluno                     Aluno[]
+  Message                   Message[]
 
   @@map("escola_users")
 }
@@ -432,7 +433,6 @@ model Aluno {
   Progresso                Progresso[]
   Aluno_has_conquista      Aluno_has_conquista[]
   Room                     Room[]
-  Message                  Message[]
 
   @@map("alunos")
 }
@@ -911,7 +911,7 @@ model Message {
   room    Room   @relation(fields: [id_room], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   id_user String
-  user    Aluno  @relation(fields: [id_user], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user    EscolaUser @relation(fields: [id_user], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   text String
 

@@ -1,5 +1,5 @@
 import { prisma } from "../../../prisma";
-import { MessageCreateData, MessagesRepository, MessageFind, MessageDelete, MessageUpdate } from "../../interfaces/messages/messages-repository";
+import { MessageCreateData, MessagesRepository, MessageFind, GetMessagesByRoom, MessageDelete, MessageUpdate } from "../../interfaces/messages/messages-repository";
 
 export class PrismaMessagesRepository implements MessagesRepository {
 
@@ -15,6 +15,18 @@ export class PrismaMessagesRepository implements MessagesRepository {
   
     async get() {
       const rooms = await prisma.message.findMany({});
+      return rooms;
+    }
+    
+    async getMessagesByRoom({ id_room }: GetMessagesByRoom ) {
+      const rooms = await prisma.message.findMany({
+        where: {
+          id_room
+        },
+        orderBy: {
+          created_at: "asc"
+        }
+      });
       return rooms;
     }
   
