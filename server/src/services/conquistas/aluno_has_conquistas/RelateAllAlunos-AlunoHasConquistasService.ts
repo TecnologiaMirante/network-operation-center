@@ -1,38 +1,28 @@
-import { AlunosRepository } from "../../../repositories/interfaces/alunos/alunos-repository";
 import { AlunoHasConquistasRepository } from "../../../repositories/interfaces/conquistas/aluno-has-conquistas-repository";
 import { ConquistasRepository } from "../../../repositories/interfaces/conquistas/conquistas-repository";
 
 // Interface
-interface AlunoHasConquistasRequest {
-  progress: number;
-  id_aluno: string;
+interface RelateAllAlunosAlunoHasConquistasRequest {
   id_conquista: string;
 }
 
 // Para cada tipo de conquista
 // Existe um funcionamento diferente
 
-
 // Service
-export class CreateAlunoHasConquistasService {
+export class RelateAllAlunosAlunoHasConquistasService {
   
   // Recebendo o repositório
   constructor(
     private alunoHasConquistasRepository: AlunoHasConquistasRepository,
-    private alunosRepository: AlunosRepository,
     private conquistasRepository: ConquistasRepository,
   ) {}
 
   // Executando o service
-  async execute(request: AlunoHasConquistasRequest) {
+  async execute(request: RelateAllAlunosAlunoHasConquistasRequest) {
     
     // Dados do service
-    const { progress, id_aluno, id_conquista } = request;
-
-    // Verifica se existe o aluno
-    if (!(await this.alunosRepository.find({ id: id_aluno }))) {
-      return new Error("O aluno não existe");
-    }
+    const { id_conquista } = request;
 
     // Verifica se a conquista existe
     if (!await this.conquistasRepository.find({ id: id_conquista })) {
@@ -40,9 +30,7 @@ export class CreateAlunoHasConquistasService {
     }
 
     // Criando ...
-    return await this.alunoHasConquistasRepository.create({
-      progress, 
-      id_aluno, 
+    return await this.alunoHasConquistasRepository.relateAll({
       id_conquista
     })
   }

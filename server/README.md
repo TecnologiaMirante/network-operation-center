@@ -133,3 +133,8 @@
 
 - Por enquanto, ele vai ser mais estático com pontuação aumentando conforme o aluno realiza atividades
 - Posteriormente, será um microservice, onde eventos disparados pelo websocket irão verificar a posição do aluno e atualizar o rank automaticamente
+
+### Funcionamento das conquistas
+  - Cada conquista possui a sua própria tabela
+  - Existe uma tabela de relacionamento que armazena o progresso do aluno em cada conquista
+    - Ex: Faça X atividades com a nota Y na disciplina de matemática

@@ -80,13 +80,11 @@ io.on("connection", (socket) => {
         const mes = await getMessagesRoomFunction(Object(room).id, prismaMessagesRepository, prismaRoomsRepository);
         // console.log(Object.values(mes)[0])
 
-        const teste = [...Object.values(mes)]
-        
         result = {
           room_id: Object(room).id,
-          messages: teste
+          messages: [...Object.values(mes)]
         }
-
+        
       }
 
       // Se não existir, cria a sala como id do aluno e do professor

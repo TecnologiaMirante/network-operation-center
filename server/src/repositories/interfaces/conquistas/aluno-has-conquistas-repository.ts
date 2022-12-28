@@ -1,6 +1,5 @@
 export interface AlunoHasConquistasCreateData {
-    name: string;
-    progress: string;
+    progress?: number;
     id_aluno: string;
     id_conquista: string;
 }
@@ -13,10 +12,14 @@ export interface AlunoHasConquistasDelete {
     id: string;
 }
 
+export interface AlunoHasConquistasRelateAllAlunos {
+    id_conquista: string;
+
+}
+
 export interface AlunoHasConquistasUpdate {
     id: string;
-    name?: string;
-    progress?: string;
+    progress?: number;
     id_aluno?: string;
     id_conquista?: string;
 }
@@ -25,6 +28,7 @@ export interface AlunoHasConquistasRepository {
     create: (data: AlunoHasConquistasCreateData) => Promise<Object>;
     get: () => Promise<Object>;
     find: (data: AlunoHasConquistasFind) => Promise<Object | null>;
+    relateAll: (data: AlunoHasConquistasRelateAllAlunos) => Promise<void>;
     delete: (data: AlunoHasConquistasDelete) => Promise<void>;
     update: (data: AlunoHasConquistasUpdate) => Promise<void>;
 }
