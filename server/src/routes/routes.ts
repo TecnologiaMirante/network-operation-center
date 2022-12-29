@@ -199,6 +199,7 @@ import { CreateConquistasController } from "../controllers/conquistas/CreateConq
 import { GetDadosBIAtividadesController } from "../controllers/dados/GetDadosBIAtividadesController";
 import { GetDadosBIAulasController } from "../controllers/dados/GetDadosBIAulasController";
 import { FindConteudoBySerieDisciplinaController } from "../controllers/conteudos/FindConteudoBySerieDisciplinaController";
+import { FindAtividadeWebViewController } from "../controllers/atividades/FindAtividadeWebViewController";
 
 const router = Router();
 
@@ -531,6 +532,10 @@ router
   .put(new UpdateAtividadeController().handle)
   .delete(new DeleteAtividadeController().handle)
   .get(new FindAtividadeController().handle)
+
+router
+  .route("/atividades/:id/webView")
+  .get(new FindAtividadeWebViewController().handle)
 
 router
   .route("/atividadeQuestoes/:id")

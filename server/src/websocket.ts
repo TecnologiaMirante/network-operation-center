@@ -9,13 +9,19 @@ import { CreateRoomService } from "./services/rooms/CreateRoomService";
 import { CreateMessageService } from "./services/messages/CreateMessageService";
 import { GetMessagesByRoomService } from "./services/messages/GetMessagesByRoomService";
 
+interface definitionInterface2{
+  (message:string):void;
+}
+
+type User = {
+  _id: string;
+}
+
 type Message = {
-  id: string;
-  created_at: Date;
-  updated_at: Date;
-  id_room: string;
-  id_user: string;
+  _id: string;
   text: string;
+  createdAt: Date;
+  user: User;
 }
 
 type definitionInterfaceBase = {
@@ -27,12 +33,15 @@ interface definitionInterface{
   (messages: definitionInterfaceBase): void;
 }
 
-interface definitionInterface2{
-  (message:string):void;
+interface RoomUser {
+  socket_id: string,
+  username: string,
+  room: string
 }
 
+const users: RoomUser[] = [];
+
 io.on("connection", (socket) => {
-    console.log("a user connected");
 
     const prismaRoomsRepository = new PrismaRoomsRepository();
     const prismaMessagesRepository = new PrismaMessagesRepository();
@@ -59,37 +68,66 @@ io.on("connection", (socket) => {
       const findRoomService = new FindByNameRoomService(prismaRoomsRepository);
 
       // Buscando a sala
-      let room = await findRoomService.execute(id_name);
-
+      let room = await findRoomService.execute({id_name});
 
       // Se ela existir, conecta o aluno a sala
       if (room) {
 
-        console.log("Entrou na sala")
-
         // Conectando o aluno a sala
         socket.join(Object(room).id_name);
+
+        // Verificando se o usuário já está na lista e se está na mesma sala
+        const userInRoom = users.find(user => user.username === data.id_aluno && user.room === Object(room).id);
+         
+        // Se existir
+        if (userInRoom) {
+          userInRoom.socket_id = socket.id;
+
+        }
+
+        else {
+          users.push({
+            username: data.id_aluno,
+            socket_id: socket.id,
+            room: Object(room).id
+          })
+        }
 
         // Sempre que houver reload, um novo socket é criado
         // Podem existir duplicatas
         // Verificando se o usuário já está na lista e se está na mesma sala
-
         // Em breve ...
 
+        // Variável para formatar a saída das mensagens
+        const final_messages: Message[] = [];
+
         // Pegando todas as mensagens da sala
-        const mes = await getMessagesRoomFunction(Object(room).id, prismaMessagesRepository, prismaRoomsRepository);
-        // console.log(Object.values(mes)[0])
+        const messsages_raw = await getMessagesRoomFunction(Object(room).id, prismaMessagesRepository, prismaRoomsRepository);
+        const mes = [...Object.values(messsages_raw)];
+
+        // Percorrendo as mensagens da sala
+        for (let msg of mes) {
+          let msg_aux: Message = {
+            _id: msg.id,
+            text: msg.text,
+            createdAt: msg.created_at,
+            user: {
+              _id: msg.id_user,
+            }
+          }
+
+          final_messages.push(msg_aux);
+        }
 
         result = {
           room_id: Object(room).id,
-          messages: [...Object.values(mes)]
+          messages: final_messages
         }
         
       }
 
       // Se não existir, cria a sala como id do aluno e do professor
       else {
-        console.log("Criando sala")
         const createRoomService = new CreateRoomService(prismaRoomsRepository, prismaAlunosRepository, prismaProfessoresRepository);
         
         room = await createRoomService.execute({
@@ -98,6 +136,8 @@ io.on("connection", (socket) => {
           id_name
         });
       }
+
+      console.log(users)
 
       callback(
         result
@@ -108,10 +148,6 @@ io.on("connection", (socket) => {
     socket.on("send_message", async (data, callback:definitionInterface2) => {
       
       io.emit("received_message", data);
-
-      console.log("\n\n\n *************************************************************************")
-      console.log(data[0].user._idSala)
-      console.log("\n\n\n *************************************************************************")
 
       // Salvando a mensagem no banco
       const createMessageService = new CreateMessageService(prismaRoomsRepository, prismaEscolaUsersRepository, prismaMessagesRepository);

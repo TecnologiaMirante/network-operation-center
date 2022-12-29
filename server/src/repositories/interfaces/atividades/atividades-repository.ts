@@ -10,6 +10,10 @@ export interface AtividadeFind {
     id: string;
 }
 
+export interface AtividadeFindWebView {
+    id: string;
+}
+
 export interface AtividadeFindEssentialData {
     id: string;
 }
@@ -46,6 +50,7 @@ export interface AtividadesRepository {
     getByDisciplina: (data: AtividadeGetByDisciplinas) => Promise<Object>;
     findEssentialData: (data: AtividadeFindEssentialData) => Promise<Object | null>;
     find: (data: AtividadeFind) => Promise<Object | null>;
+    findWebView: (data: AtividadeFindWebView) => Promise<Object | null>;
     delete: (data: AtividadeDelete) => Promise<void>;
     update: (data: AtividadeUpdate) => Promise<Object>;
 }

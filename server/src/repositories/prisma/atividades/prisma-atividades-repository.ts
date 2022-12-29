@@ -1,5 +1,5 @@
 import { prisma } from "../../../prisma";
-import { AtividadeCreateData, AtividadesRepository, AtividadeFind, AtividadeDelete, AtividadeUpdate, AtividadeGetQuestoes, AtividadeFindEssentialData, AtividadeGetByDisciplinas, AtividadeGetQuestoesID } from "../../interfaces/atividades/atividades-repository";
+import { AtividadeCreateData, AtividadesRepository, AtividadeFind, AtividadeDelete, AtividadeUpdate, AtividadeGetQuestoes, AtividadeFindEssentialData, AtividadeGetByDisciplinas, AtividadeGetQuestoesID, AtividadeFindWebView } from "../../interfaces/atividades/atividades-repository";
 
 export class PrismaAtividadesRepository implements AtividadesRepository {
 
@@ -22,6 +22,82 @@ export class PrismaAtividadesRepository implements AtividadesRepository {
       }
     });
     return atividades;
+  }
+
+  async findWebView({ id }: AtividadeFindWebView) {
+    const atividade = await prisma.atividade.findUnique(
+      {
+        where: {
+          id
+        },
+        select: {
+          title: true,
+          Atividade_has_questao: {
+            select: {
+              questao: {
+                select: {
+                  id: true,
+                  title: true,
+                  grade: true,
+                  difficulty: true,
+                  opcao: {
+                    select: {
+                      description: true,
+                      is_correct: true,
+                    },
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    );
+
+    // let questoes = [];
+
+    // // Percorrendo as questões
+    // for (let questao of Object(atividade).Atividade_has_questao) {
+
+    //   questoes.push(Object.values(questao)[0])
+    // }
+
+    // // Percorrendo o array das questões para verificar qual resposta é a correta
+    // for (let questao of questoes) {
+    //   // Criando um array para colocar a descrição de cada opção em um array
+    //   let array_ops_desc = [];
+
+    //   // Array das opções
+    //   const array_ops = Object(questao).opcao;
+
+    //   // Index da resposta correta
+    //   let index = array_ops.findIndex((e: Object) => Object(e).is_correct == true);
+
+    //   // Colocando o index da resposta correta no respectivo campo
+    //   Object(questao).answer_index = index;
+
+    //   // Percorrendo as opções da questão
+    //   for (let op of array_ops) {
+    //     // Adicionando a descrição da opção no array
+    //     array_ops_desc.push(op.description)
+    //   }
+
+    //   // Apagando o campo antigo das opções
+    //   delete Object(questao).opcao;
+
+    //   // Adicionando o campo organizado das opções
+    //   Object(questao).opcoes = array_ops_desc
+    // }
+    
+
+    // // Criando nova key questoes e apagando a antiga
+    // Object(atividade).questoes = questoes;
+    // delete Object(atividade).Atividade_has_questao;
+    
+    Object(atividade).questoes = Object(atividade).Atividade_has_questao;
+    delete Object(atividade).Atividade_has_questao;
+
+    return atividade;
   }
 
   async find({ id }: AtividadeFind) {

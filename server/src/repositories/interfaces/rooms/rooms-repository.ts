@@ -1,6 +1,7 @@
 
 export interface RoomCreateData {
     id_aluno: string;
+    id_socket?: string;
     id_professor: string;
     id_name: string
 }
@@ -20,8 +21,14 @@ export interface RoomDelete {
 export interface RoomUpdate {
     id: string;
     id_aluno?: string;
+    id_socket?: string;
     id_professor?: string;
     id_name?: string;
+}
+
+export interface RoomUpdateSocket {
+    id: string;
+    id_socket: string;
 }
 
 export interface RoomsRepository {
@@ -31,4 +38,5 @@ export interface RoomsRepository {
     findByName: (data: RoomFindByName) => Promise<Object | null>;
     delete: (data: RoomDelete) => Promise<void>;
     update: (data: RoomUpdate) => Promise<Object | null>;
+    updateSocket: (data: RoomUpdateSocket) => Promise<Object | null>;
 }
