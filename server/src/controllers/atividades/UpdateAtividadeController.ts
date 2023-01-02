@@ -135,8 +135,8 @@ class UpdateAtividadeController {
     // 2 - VERIFICANDO AS QUESTÕES VINDAS DA REQUISIÇÃO ================================================================================================
     
     // Dados do corpo da requisição
-    // const { questions } = req.body;
-    const questoes_novas = req.body.questions;
+    // const { questoes } = req.body;
+    const questoes_novas = req.body.questoes;
 
     // Na hora de atualizar as questões da atividade, existem 3 casos
     // 1 - Editar a questão
@@ -154,7 +154,7 @@ class UpdateAtividadeController {
     //    - Compara as questões vindas da requisição com as já existentes
     //    - A questão que existir no array das existentes, porém estiver faltando no array das vindas da requisição, seu relacionamento é excluído
 
-    // A variável "questions" é opcional, portanto, o service seguinte só é chamado caso ela não seja nula
+    // A variável "questoes" é opcional, portanto, o service seguinte só é chamado caso ela não seja nula
     if (questoes_novas && questoes_novas.length != 0) {
       
       // Array com as questões válidas
@@ -208,14 +208,14 @@ class UpdateAtividadeController {
             const createManyOpcoesService = new CreateManyOpcoesService(prismaOpcoesRepository, prismaQuestoesRepository);
       
             // Adicionando o id da questão nas opções para o tipo de dado que o service aceita
-            for (let item of question.options) {
+            for (let item of question.opcao) {
               item.id_questao = question.id;
             }
 
             // Criando as opções
             try {
               const opcoes = await createManyOpcoesService.execute({
-                  array_opcao: question.options
+                  array_opcao: question.opcao
               });  
 
               if (opcoes instanceof Error) {
@@ -241,7 +241,7 @@ class UpdateAtividadeController {
             try {
               // Executando o service
               const questao = await createQuestaoService.execute({
-                  title: question.title_question,
+                  title: question.title,
                   question_type: question.question_type,
                   id_disciplina,
                   grade: 10,
@@ -255,13 +255,13 @@ class UpdateAtividadeController {
               // Instância do service
               const createManyOpcoesService = new CreateManyOpcoesService(prismaOpcoesRepository, prismaQuestoesRepository);
   
-              for (let item1 of question.options) {
+              for (let item1 of question.opcao) {
                   item1.id_questao = Object(questao).id;
               }
   
               try {
                   const opcoes = await createManyOpcoesService.execute({
-                      array_opcao: question.options
+                      array_opcao: question.opcao
                   });  
                   
               } catch (err) {

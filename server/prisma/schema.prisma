@@ -893,14 +893,29 @@ model Room {
 
   id_name String @unique
 
-  id_socket String? @unique
-
   id_aluno String
   aluno    Aluno  @relation(fields: [id_aluno], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   id_professor String
-  professor    Professor @relation(fields: [id_professor], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  professor    Professor  @relation(fields: [id_professor], references: [id], onDelete: Cascade, onUpdate: Cascade)
   Message      Message[]
+  UserRoom     UserRoom[]
+}
+
+model UserRoom {
+  id String @id @default(uuid())
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  id_socket String? @unique
+
+  id_connected String? @unique
+
+  id_room String
+  room    Room   @relation(fields: [id_room], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("user_rooms")
 }
 
 model Message {

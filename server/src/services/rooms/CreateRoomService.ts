@@ -39,7 +39,7 @@ export class CreateRoomService {
     const room = await this.roomsRepository.create({
       id_aluno, 
       id_professor,
-      id_name
+      id_name,
     })
 
     // Retornando dado criado para o controller

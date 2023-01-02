@@ -1,13 +1,18 @@
 import { io } from "./http";
 import { PrismaRoomsRepository } from "./repositories/prisma/rooms/prisma-rooms-repository";
+import { PrismaUserRoomsRepository } from "./repositories/prisma/rooms/user-rooms/prisma-user-rooms-repository";
 import { PrismaAlunosRepository } from "./repositories/prisma/alunos/prisma-alunos-repository";
 import { PrismaProfessoresRepository } from "./repositories/prisma/professores/prisma-professores-repository";
 import { PrismaMessagesRepository } from "./repositories/prisma/messages/prisma-messages-repository";
 import { PrismaEscolaUsersRepository } from "./repositories/prisma/escolas/prisma-escolas-users-repository";
 import { FindByNameRoomService } from "./services/rooms/FindRoomByNameService";
+import { AddUserRoomSocketService } from "./services/rooms/userRooms/AddUserRoomSocketService";
+import { UserIsInRoomSocketService } from "./services/rooms/userRooms/UserIsInRoomSocketService";
 import { CreateRoomService } from "./services/rooms/CreateRoomService";
 import { CreateMessageService } from "./services/messages/CreateMessageService";
 import { GetMessagesByRoomService } from "./services/messages/GetMessagesByRoomService";
+import { UpdateRoomSocketService } from "./services/rooms/userRooms/UpdateRoomSocketService";
+import { CreateUserRoomSocketService } from "./services/rooms/userRooms/CreateUserRoomSocketService";
 
 interface definitionInterface2{
   (message:string):void;
@@ -44,19 +49,11 @@ const users: RoomUser[] = [];
 io.on("connection", (socket) => {
 
     const prismaRoomsRepository = new PrismaRoomsRepository();
+    const prismaUserRoomsRepository = new PrismaUserRoomsRepository();
     const prismaMessagesRepository = new PrismaMessagesRepository();
     const prismaEscolaUsersRepository = new PrismaEscolaUsersRepository();   
 
     let result: definitionInterfaceBase;
-
-    // Teste
-    // socket.on("update item", (arg1: number, arg2: number, callback: definitionInterface) => {
-    //   console.log(arg1); // 1
-    //   console.log(arg2); // { name: "updated" }
-    //   callback(
-    //     "ok"
-    //   );
-    // });
 
     // Quando o aluno se conectar, o socket vai receber o id dele e o do professor
     socket.on("select_room", async (data, callback:definitionInterface) => {
@@ -67,6 +64,11 @@ io.on("connection", (socket) => {
       const prismaProfessoresRepository = new PrismaProfessoresRepository();
       const findRoomService = new FindByNameRoomService(prismaRoomsRepository);
 
+      const userIsInRoomSocketService = new UserIsInRoomSocketService(prismaUserRoomsRepository, prismaRoomsRepository);
+      const addUserRoomSocketService = new AddUserRoomSocketService(prismaUserRoomsRepository);
+      const updateRoomSocketService = new UpdateRoomSocketService(prismaUserRoomsRepository, prismaRoomsRepository);
+      const createUserRoomSocketService = new CreateUserRoomSocketService(prismaUserRoomsRepository);
+
       // Buscando a sala
       let room = await findRoomService.execute({id_name});
 
@@ -76,21 +78,34 @@ io.on("connection", (socket) => {
         // Conectando o aluno a sala
         socket.join(Object(room).id_name);
 
-        // Verificando se o usuário já está na lista e se está na mesma sala
-        const userInRoom = users.find(user => user.username === data.id_aluno && user.room === Object(room).id);
-         
-        // Se existir
-        if (userInRoom) {
-          userInRoom.socket_id = socket.id;
+        // Verificando se o usuário já está na sala
+        const isInRoom = await userIsInRoomSocketService.execute({ id_room: Object(room).id, id_connected: data.id_connected });
+        
+        console.log("aqui")
+        console.log(isInRoom);
 
+        // Se existir
+        if(isInRoom) {
+          // Atualiza o seu socket
+          await updateRoomSocketService.execute({ id_room: Object(room).id, id_socket: socket.id, id_connected: data.id_connected });
         }
 
+        // const userInRoom = users.find(user => user.username === data.id_aluno && user.room === Object(room).id);
+
+        // // Se existir
+        // if (userInRoom) {
+        //   userInRoom.socket_id = socket.id;
+        // }
+
         else {
-          users.push({
-            username: data.id_aluno,
-            socket_id: socket.id,
-            room: Object(room).id
-          })
+          console.log("não existe 2")
+          await addUserRoomSocketService.execute({ id: Object(room).id, id_socket: socket.id, id_connected: data.id_connected });
+
+          // users.push({
+          //   username: data.id_aluno,
+          //   socket_id: socket.id,
+          //   room: Object(room).id
+          // })
         }
 
         // Sempre que houver reload, um novo socket é criado
@@ -128,16 +143,22 @@ io.on("connection", (socket) => {
 
       // Se não existir, cria a sala como id do aluno e do professor
       else {
+
         const createRoomService = new CreateRoomService(prismaRoomsRepository, prismaAlunosRepository, prismaProfessoresRepository);
         
         room = await createRoomService.execute({
           id_aluno: data.id_aluno,
           id_professor: data.id_professor,
-          id_name
+          id_name,
         });
-      }
 
-      console.log(users)
+        // Adicionando usuário na sala
+        await createUserRoomSocketService.execute({
+          id_room: Object(room).id,
+          id_connected: data.id_connected,
+          id_socket: socket.id,
+        })
+      }
 
       callback(
         result

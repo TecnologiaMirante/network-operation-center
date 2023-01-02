@@ -1,7 +1,6 @@
 
 export interface RoomCreateData {
     id_aluno: string;
-    id_socket?: string;
     id_professor: string;
     id_name: string
 }
@@ -26,10 +25,22 @@ export interface RoomUpdate {
     id_name?: string;
 }
 
-export interface RoomUpdateSocket {
-    id: string;
-    id_socket: string;
-}
+// export interface RoomUpdateSocketRoom {
+//     id: string;
+//     id_socket: string;
+//     id_connected: string;
+// }
+
+// export interface RoomAddUser {
+//     id: string;
+//     id_connected: string;
+//     id_socket: string;
+// }
+
+// export interface RoomUserIsInRoom {
+//     id: string;
+//     id_connected: string;
+// }
 
 export interface RoomsRepository {
     create: (data: RoomCreateData) => Promise<Object>;
@@ -38,5 +49,7 @@ export interface RoomsRepository {
     findByName: (data: RoomFindByName) => Promise<Object | null>;
     delete: (data: RoomDelete) => Promise<void>;
     update: (data: RoomUpdate) => Promise<Object | null>;
-    updateSocket: (data: RoomUpdateSocket) => Promise<Object | null>;
+    // updateSocketRoom: (data: RoomUpdateSocketRoom) => Promise<Object | null>;
+    // addUser: (data: RoomAddUser) => Promise<Object | null>;
+    // userIsInRoom: (data: RoomUserIsInRoom) => Promise<Object | null>;
 }

@@ -1,5 +1,5 @@
 import { prisma } from "../../../prisma";
-import { RoomCreateData, RoomsRepository, RoomFind, RoomDelete, RoomUpdate, RoomFindByName, RoomUpdateSocket } from "../../interfaces/rooms/rooms-repository";
+import { RoomCreateData, RoomsRepository, RoomFind, RoomDelete, RoomUpdate, RoomFindByName } from "../../interfaces/rooms/rooms-repository";
 
 export class PrismaRoomsRepository implements RoomsRepository {
 
@@ -8,7 +8,7 @@ export class PrismaRoomsRepository implements RoomsRepository {
         data: {
             id_aluno, 
             id_professor,
-            id_name
+            id_name,
         }
       })
     };
@@ -58,14 +58,36 @@ export class PrismaRoomsRepository implements RoomsRepository {
       })
     };
 
-    async updateSocket({ id, id_socket }: RoomUpdateSocket) {
-      return await prisma.room.update({
-        where: {
-          id
-        },
-        data: {
-          id_socket
-        }
-      })
-    };
+    // async updateSocketRoom({ id, id_socket }: RoomUpdateSocketRoom) {
+    //   return await prisma.room.update({
+    //     where: {
+    //       id
+    //     },
+    //     data: {
+    //       id_socket
+    //     }
+    //   })
+    // };
+
+    // async addUser({ id, id_connected }: RoomAddUser) {
+    //   return await prisma.room.update({
+    //     where: {
+    //       id,
+    //     },
+    //     data: {
+    //       id_connected
+    //     }
+    //   })
+    // }
+
+    // async userIsInRoom({ id, id_connected }: RoomUserIsInRoom) {
+    //   const users = await prisma.room.findFirst({
+    //     where: {
+    //       id,
+    //       id_connected
+    //     }
+    //   });
+
+    //   return users;
+    // }
   }
