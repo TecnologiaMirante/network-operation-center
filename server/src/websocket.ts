@@ -154,11 +154,10 @@ io.on("connection", (socket) => {
           id_socket: socket.id,
         })
 
-    
         const getOpenUserRooms = new GetOpenUserRoomsSocketService(prismaUserRoomsRepository, prismaProfessoresRepository);
-  
+        
         const openRooms = await getOpenUserRooms.execute({
-          id_professor: data.professor
+          id_professor: data.id_professor
         });
 
         socket.emit("open_chats", openRooms);
@@ -174,6 +173,8 @@ io.on("connection", (socket) => {
     socket.on("send_message", async (data, callback:definitionInterface2) => {
       
       io.emit("received_message", data);
+
+      console.log(data);
 
       // Salvando a mensagem no banco
       const createMessageService = new CreateMessageService(prismaRoomsRepository, prismaEscolaUsersRepository, prismaMessagesRepository);
