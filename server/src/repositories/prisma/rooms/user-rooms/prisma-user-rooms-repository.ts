@@ -1,5 +1,5 @@
 import { prisma } from "../../../../prisma";
-import { UserRoomCreateData, UserRoomsRepository, UserRoomFind, UserRoomDelete, UserRoomUpdate, UserRoomUpdateSocketUserRoom, UserRoomAddUser, UserRoomUserIsInUserRoom } from "../../../interfaces/rooms/user-rooms/user-rooms-repository";
+import { UserRoomCreateData, UserRoomsRepository, UserRoomFind, UserRoomDelete, UserRoomUpdate, UserRoomUpdateSocketUserRoom, UserRoomAddUser, UserRoomUserIsInUserRoom, UserRoomUserGetOpenRooms } from "../../../interfaces/rooms/user-rooms/user-rooms-repository";
 
 export class PrismaUserRoomsRepository implements UserRoomsRepository {
 
@@ -81,4 +81,15 @@ export class PrismaUserRoomsRepository implements UserRoomsRepository {
 
       return users;
     }
+
+    async getOpenUserRooms({ id_professor }: UserRoomUserGetOpenRooms) {
+      return await prisma.userRoom.findMany({
+        where: {
+          room: {
+            id_professor
+          }
+        },
+      });
+    }
+
   }

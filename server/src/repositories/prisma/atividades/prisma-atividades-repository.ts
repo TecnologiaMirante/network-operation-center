@@ -97,6 +97,14 @@ export class PrismaAtividadesRepository implements AtividadesRepository {
     Object(atividade).questoes = Object(atividade).Atividade_has_questao;
     delete Object(atividade).Atividade_has_questao;
 
+    const array_questoes = [];
+
+    for (let questao of Object(atividade).questoes) {
+      array_questoes.push(questao.questao);
+    }
+
+    Object(atividade).questoes = array_questoes;
+
     return atividade;
   }
 

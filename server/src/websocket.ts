@@ -11,8 +11,9 @@ import { UserIsInRoomSocketService } from "./services/rooms/userRooms/UserIsInRo
 import { CreateRoomService } from "./services/rooms/CreateRoomService";
 import { CreateMessageService } from "./services/messages/CreateMessageService";
 import { GetMessagesByRoomService } from "./services/messages/GetMessagesByRoomService";
-import { UpdateRoomSocketService } from "./services/rooms/userRooms/UpdateRoomSocketService";
+import { UpdateRoomSocketService } from "./services/rooms/userRooms/UpdateUserRoomSocketService";
 import { CreateUserRoomSocketService } from "./services/rooms/userRooms/CreateUserRoomSocketService";
+import { GetOpenUserRoomsSocketService } from "./services/rooms/userRooms/GetOpenUserRoomsSocketService";
 
 interface definitionInterface2{
   (message:string):void;
@@ -37,14 +38,6 @@ type definitionInterfaceBase = {
 interface definitionInterface{
   (messages: definitionInterfaceBase): void;
 }
-
-interface RoomUser {
-  socket_id: string,
-  username: string,
-  room: string
-}
-
-const users: RoomUser[] = [];
 
 io.on("connection", (socket) => {
 
@@ -143,6 +136,8 @@ io.on("connection", (socket) => {
 
       // Se não existir, cria a sala como id do aluno e do professor
       else {
+        
+        const prismaProfessoresRepository = new PrismaProfessoresRepository();
 
         const createRoomService = new CreateRoomService(prismaRoomsRepository, prismaAlunosRepository, prismaProfessoresRepository);
         
@@ -158,6 +153,16 @@ io.on("connection", (socket) => {
           id_connected: data.id_connected,
           id_socket: socket.id,
         })
+
+    
+        const getOpenUserRooms = new GetOpenUserRoomsSocketService(prismaUserRoomsRepository, prismaProfessoresRepository);
+  
+        const openRooms = await getOpenUserRooms.execute({
+          id_professor: data.professor
+        });
+
+        socket.emit("open_chats", openRooms);
+
       }
 
       callback(
@@ -185,6 +190,9 @@ io.on("connection", (socket) => {
       callback("Message Receive")
     });
   
+
+
+
     socket.on("disconnect", () => {
       console.log("user disconnected");
     });

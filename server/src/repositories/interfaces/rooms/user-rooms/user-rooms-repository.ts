@@ -35,6 +35,10 @@ export interface UserRoomUserIsInUserRoom {
     id_connected: string;
 }
 
+export interface UserRoomUserGetOpenRooms {
+    id_professor: string;
+}
+
 export interface UserRoomsRepository {
     create: (data: UserRoomCreateData) => Promise<Object>;
     get: () => Promise<Object>;
@@ -44,4 +48,5 @@ export interface UserRoomsRepository {
     updateSocketUserRoom: (data: UserRoomUpdateSocketUserRoom) => Promise<Object | null>;
     addUser: (data: UserRoomAddUser) => Promise<Object | null>;
     isInUserRoom: (data: UserRoomUserIsInUserRoom) => Promise<Object | null>;
+    getOpenUserRooms: (data: UserRoomUserGetOpenRooms) => Promise<Object>;
 }
