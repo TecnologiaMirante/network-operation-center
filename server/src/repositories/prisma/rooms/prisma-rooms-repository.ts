@@ -1,5 +1,5 @@
 import { prisma } from "../../../prisma";
-import { RoomCreateData, RoomsRepository, RoomFind, RoomDelete, RoomUpdate, RoomFindByName } from "../../interfaces/rooms/rooms-repository";
+import { RoomCreateData, RoomsRepository, RoomFind, RoomDelete, RoomUpdate, RoomFindByName, RoomGetOpenRooms } from "../../interfaces/rooms/rooms-repository";
 
 export class PrismaRoomsRepository implements RoomsRepository {
 
@@ -57,6 +57,60 @@ export class PrismaRoomsRepository implements RoomsRepository {
         }
       })
     };
+
+    async getOpenRooms({ id_professor }: RoomGetOpenRooms) {
+      
+      const rooms = await prisma.room.findMany({
+        where: {
+          id_professor
+        }
+      });
+
+      // Para cada sala
+      for (let room of rooms) {
+
+        // Pegando os dados do aluno
+        const aluno_name = await prisma.aluno.findFirst({
+          where: {
+            id: room.id_aluno
+          },
+          select: {
+            escola_user: {
+              select: {
+                name: true,
+                avatar: true
+              }
+            }
+          }
+        });
+
+        // Adicionando os dados do aluno no objeto
+        Object(room).aluno_name = Object(aluno_name).escola_user.name;
+        Object(room).aluno_avatar = Object(aluno_name).escola_user.avatar;
+        
+        // Pegando as mensagens da sala
+        const msgs_sala = await prisma.message.findMany({
+          where: {
+            id_room: room.id
+          },
+          orderBy: {
+            created_at: "asc"
+          }
+        });
+
+        // Verificando se a sala não está vazia
+        if(msgs_sala.length > 0) {
+          Object(room).msg = msgs_sala[msgs_sala.length - 1];
+        } else {
+          Object(room).msg = "Nova mensagem";
+        }
+
+      }
+
+
+
+      return rooms;
+    }
 
     // async updateSocketRoom({ id, id_socket }: RoomUpdateSocketRoom) {
     //   return await prisma.room.update({

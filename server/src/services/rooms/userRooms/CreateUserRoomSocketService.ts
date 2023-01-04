@@ -28,9 +28,6 @@ export class CreateUserRoomSocketService {
       id_connected
     })
 
-    console.log(room);
-
-
     // Retornando dado criado para o controller
     return room;
   }

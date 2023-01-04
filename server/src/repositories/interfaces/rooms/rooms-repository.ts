@@ -42,6 +42,10 @@ export interface RoomUpdate {
 //     id_connected: string;
 // }
 
+export interface RoomGetOpenRooms {
+    id_professor: string;
+}
+
 export interface RoomsRepository {
     create: (data: RoomCreateData) => Promise<Object>;
     get: () => Promise<Object>;
@@ -49,6 +53,7 @@ export interface RoomsRepository {
     findByName: (data: RoomFindByName) => Promise<Object | null>;
     delete: (data: RoomDelete) => Promise<void>;
     update: (data: RoomUpdate) => Promise<Object | null>;
+    getOpenRooms: (data: RoomGetOpenRooms) => Promise<Object>;
     // updateSocketRoom: (data: RoomUpdateSocketRoom) => Promise<Object | null>;
     // addUser: (data: RoomAddUser) => Promise<Object | null>;
     // userIsInRoom: (data: RoomUserIsInRoom) => Promise<Object | null>;

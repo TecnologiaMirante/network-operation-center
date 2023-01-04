@@ -1,17 +1,20 @@
 import { prisma } from "../../../../prisma";
-import { UserRoomCreateData, UserRoomsRepository, UserRoomFind, UserRoomDelete, UserRoomUpdate, UserRoomUpdateSocketUserRoom, UserRoomAddUser, UserRoomUserIsInUserRoom, UserRoomUserGetOpenRooms } from "../../../interfaces/rooms/user-rooms/user-rooms-repository";
+import { UserRoomCreateData, UserRoomsRepository, UserRoomFind, UserRoomDelete, UserRoomUpdate, UserRoomUpdateSocketUserRoom, UserRoomAddUser, UserRoomUserIsInUserRoom } from "../../../interfaces/rooms/user-rooms/user-rooms-repository";
 
 export class PrismaUserRoomsRepository implements UserRoomsRepository {
 
     async create( { id_room, id_socket, id_connected }: UserRoomCreateData ) {
 
-      return await prisma.userRoom.create({
+      const room = await prisma.userRoom.create({
         data: {
-          id_room, 
+          id_room,
           id_socket, 
           id_connected
         }
       })
+      
+      return id_room;
+
     };
   
     async get() {
@@ -60,13 +63,12 @@ export class PrismaUserRoomsRepository implements UserRoomsRepository {
       })
     };
 
-    async addUser({ id, id_connected }: UserRoomAddUser) {
-      return await prisma.userRoom.update({
-        where: {
-          id,
-        },
+    async addUser({ id_room, id_socket, id_connected }: UserRoomAddUser) {
+      return await prisma.userRoom.create({
         data: {
-          id_connected
+          id_room,
+          id_socket,
+          id_connected,
         }
       })
     }
@@ -82,14 +84,6 @@ export class PrismaUserRoomsRepository implements UserRoomsRepository {
       return users;
     }
 
-    async getOpenUserRooms({ id_professor }: UserRoomUserGetOpenRooms) {
-      return await prisma.userRoom.findMany({
-        where: {
-          room: {
-            id_professor
-          }
-        },
-      });
-    }
+    
 
   }

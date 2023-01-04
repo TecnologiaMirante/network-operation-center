@@ -25,7 +25,7 @@ export interface UserRoomUpdateSocketUserRoom {
 }
 
 export interface UserRoomAddUser {
-    id: string;
+    id_room: string;
     id_connected: string;
     id_socket: string;
 }
@@ -35,12 +35,8 @@ export interface UserRoomUserIsInUserRoom {
     id_connected: string;
 }
 
-export interface UserRoomUserGetOpenRooms {
-    id_professor: string;
-}
-
 export interface UserRoomsRepository {
-    create: (data: UserRoomCreateData) => Promise<Object>;
+    create: (data: UserRoomCreateData) => Promise<Object | null >;
     get: () => Promise<Object>;
     find: (data: UserRoomFind) => Promise<Object | null>;
     delete: (data: UserRoomDelete) => Promise<void>;
@@ -48,5 +44,4 @@ export interface UserRoomsRepository {
     updateSocketUserRoom: (data: UserRoomUpdateSocketUserRoom) => Promise<Object | null>;
     addUser: (data: UserRoomAddUser) => Promise<Object | null>;
     isInUserRoom: (data: UserRoomUserIsInUserRoom) => Promise<Object | null>;
-    getOpenUserRooms: (data: UserRoomUserGetOpenRooms) => Promise<Object>;
 }

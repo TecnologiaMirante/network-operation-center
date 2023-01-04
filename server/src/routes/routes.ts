@@ -200,6 +200,7 @@ import { GetDadosBIAtividadesController } from "../controllers/dados/GetDadosBIA
 import { GetDadosBIAulasController } from "../controllers/dados/GetDadosBIAulasController";
 import { FindConteudoBySerieDisciplinaController } from "../controllers/conteudos/FindConteudoBySerieDisciplinaController";
 import { FindAtividadeWebViewController } from "../controllers/atividades/FindAtividadeWebViewController";
+import { GetOpenRoomsController } from "../controllers/rooms/GetOpenRoomsSocketController";
 
 const router = Router();
 
@@ -761,5 +762,10 @@ router
 router
   .route("/conquistas")
   .post(new CreateConquistasController().handle)
+
+// OpenRooms
+router
+  .route("/openRooms/:id_professor")
+  .get(new GetOpenRoomsController().handle)
 
 export { router };

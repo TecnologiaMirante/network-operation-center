@@ -7,15 +7,15 @@ import { Server } from "socket.io";
 
 const app = express();
 
-// // Configurando o CORS --------------------------------------------------------
-// // Adicionando a lista de IP's permitidos a acessar a API.
-// const allowedOrigins = ["http://localhost:53264/", "http://192.168.6.26:53264/"];
+// Configurando o CORS --------------------------------------------------------
+// Adicionando a lista de IP's permitidos a acessar a API.
+const allowedOrigins = ["http://localhost:53264/", "http://192.168.6.26:53264/"];
 
-// const options: cors.CorsOptions = {
-//   origin: allowedOrigins
-// };
+const options: cors.CorsOptions = {
+  origin: allowedOrigins
+};
 
-// app.use(cors());
+app.use(cors());
 
 app.use(express.json());
 
