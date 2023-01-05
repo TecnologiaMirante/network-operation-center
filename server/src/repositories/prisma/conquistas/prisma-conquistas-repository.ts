@@ -1,18 +1,51 @@
 import { prisma } from "../../../prisma";
-import { ConquistaCreateData, ConquistasRepository, ConquistaFind, ConquistaDelete, ConquistaUpdate } from "../../interfaces/conquistas/conquistas-repository";
+import { ConquistaCreateData, ConquistasRepository, ConquistaFind, ConquistaDelete, ConquistaUpdate, ConquistaCreateSpecific, ConquistaCreateGeneral } from "../../interfaces/conquistas/conquistas-repository";
 
 export class PrismaConquistasRepository implements ConquistasRepository {
 
-  async create( { name, description, type, objective, objective_secondary, discipline, difficulty }: ConquistaCreateData ) {
+  async create( { name, description, type, domain, objective, objective_secondary, id_disciplina, difficulty }: ConquistaCreateData ) {
     
     return await prisma.conquista.create({
       data: {
         name, 
         description,
         type, 
+        domain,
         objective, 
         objective_secondary, 
-        discipline, 
+        id_disciplina, 
+        difficulty
+      }
+    })
+  };
+
+  async createSpecific( { name, description, type, domain, objective, objective_secondary, id_disciplina, difficulty }: ConquistaCreateSpecific ) {
+    
+    return await prisma.conquista.create({
+      data: {
+        name, 
+        description,
+        type, 
+        domain,
+        objective, 
+        objective_secondary, 
+        id_disciplina, 
+        difficulty
+      }
+    })
+  };
+
+  async createGeneral( { name, description, type, domain, objective, objective_secondary, id_disciplina, difficulty }: ConquistaCreateGeneral ) {
+    
+    return await prisma.conquista.create({
+      data: {
+        name, 
+        description,
+        type, 
+        domain,
+        objective, 
+        objective_secondary, 
+        id_disciplina, 
         difficulty
       }
     })
@@ -42,7 +75,7 @@ export class PrismaConquistasRepository implements ConquistasRepository {
     });
   }
 
-  async update({ id, name, description, type, objective, objective_secondary, discipline, difficulty }: ConquistaUpdate) {
+  async update({ id, name, description, type, domain, objective, objective_secondary, id_disciplina, difficulty }: ConquistaUpdate) {
     await prisma.conquista.update({
       where: {
         id
@@ -51,9 +84,10 @@ export class PrismaConquistasRepository implements ConquistasRepository {
         name, 
         description,
         type, 
+        domain,
         objective, 
         objective_secondary, 
-        discipline, 
+        id_disciplina, 
         difficulty
       }
     })

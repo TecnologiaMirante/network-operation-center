@@ -301,6 +301,7 @@ model Disciplina {
   Media                  Media[]
   ProfessorHasDisciplina ProfessorHasDisciplina[]
   Atividade              Atividade[]
+  Conquista              Conquista[]
 
   @@map("disciplinas")
 }
@@ -846,9 +847,13 @@ model Conquista {
   name                String
   description         String
   type                Conquista_type
-  objective           String
-  objective_secondary String?
-  discipline          String
+  domain              Conquista_domain
+  objective           Int
+  objective_secondary Int?
+
+  id_disciplina String?
+  disciplina    Disciplina? @relation(fields: [id_disciplina], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
   difficulty          questao_difficulty    @default(normal)
   Aluno_has_conquista Aluno_has_conquista[]
 
@@ -870,13 +875,19 @@ enum Conquista_difficulty {
   hard
 }
 
+enum Conquista_domain {
+  specific
+  general
+}
+
 model Aluno_has_conquista {
   id String @id @default(uuid())
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  progress Int?
+  current  Int? @default(0)
+  progress Int? @default(0)
 
   id_aluno String
   aluno    Aluno  @relation(fields: [id_aluno], references: [id], onDelete: Cascade, onUpdate: Cascade)

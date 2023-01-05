@@ -1,8 +1,9 @@
 import { conquistas_difficulty, conquistas_domain, conquistas_type } from "../../repositories/interfaces/conquistas/conquistas-repository";
 import { ConquistasRepository } from "../../repositories/interfaces/conquistas/conquistas-repository";
+import { DisciplinasRepository } from "../../repositories/interfaces/disciplinas/disciplinas-repository";
 
 // Interface
-interface CreateConquistasRequest {
+interface CreateConquistaEspecificaRequest {
   name: string;
   description: string;
   type: conquistas_type;
@@ -17,21 +18,26 @@ interface CreateConquistasRequest {
 // Existe um funcionamento diferente
 
 // Service
-export class CreateConquistasService {
+export class CreateConquistaEspecificaService {
   
   // Recebendo o repositório
   constructor(
     private conquistasRepository: ConquistasRepository,
+    private disciplinasRepository: DisciplinasRepository,
   ) {}
 
   // Executando o service
-  async execute(request: CreateConquistasRequest) {
+  async execute(request: CreateConquistaEspecificaRequest) {
     
     // Dados do service
     const { name, description, type, domain, objective, objective_secondary, id_disciplina, difficulty } = request;
 
+    if (!(await this.disciplinasRepository.find({ id: id_disciplina }))) {
+      return new Error("Disciplina inexistente!");
+    }
+
     // Criando ...
-    return await this.conquistasRepository.create({
+    return await this.conquistasRepository.createSpecific({
       name, 
       description,
       type, 

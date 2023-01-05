@@ -2,14 +2,14 @@ import { conquistas_difficulty, conquistas_domain, conquistas_type } from "../..
 import { ConquistasRepository } from "../../repositories/interfaces/conquistas/conquistas-repository";
 
 // Interface
-interface CreateConquistasRequest {
+interface CreateConquistaGeralRequest {
   name: string;
   description: string;
   type: conquistas_type;
   domain: conquistas_domain;
   objective: number;
   objective_secondary?: number;
-  id_disciplina: string;
+  id_disciplina?: string;
   difficulty: conquistas_difficulty;
 }
 
@@ -17,7 +17,7 @@ interface CreateConquistasRequest {
 // Existe um funcionamento diferente
 
 // Service
-export class CreateConquistasService {
+export class CreateConquistaGeralService {
   
   // Recebendo o repositório
   constructor(
@@ -25,13 +25,13 @@ export class CreateConquistasService {
   ) {}
 
   // Executando o service
-  async execute(request: CreateConquistasRequest) {
+  async execute(request: CreateConquistaGeralRequest) {
     
     // Dados do service
     const { name, description, type, domain, objective, objective_secondary, id_disciplina, difficulty } = request;
 
     // Criando ...
-    return await this.conquistasRepository.create({
+    return await this.conquistasRepository.createGeneral({
       name, 
       description,
       type, 

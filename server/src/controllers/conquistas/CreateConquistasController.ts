@@ -4,29 +4,59 @@ import { PrismaAlunosRepository } from "../../repositories/prisma/alunos/prisma-
 import { RelateAllAlunosAlunoHasConquistasService } from "../../services/conquistas/aluno_has_conquistas/RelateAllAlunos-AlunoHasConquistasService";
 import { CreateConquistasService } from "../../services/conquistas/CreateConquistasService";
 import { PrismaAlunoHasConquistasRepository } from "../../repositories/prisma/conquistas/prisma-aluno-has-conquistas-repository";
+import { PrismaDisciplinasRepository } from "../../repositories/prisma/disciplinas/prisma-disciplinas-repository";
+import { CreateConquistaEspecificaService } from "../../services/conquistas/CreateConquistaEspecificaService";
+import { CreateConquistaGeralService } from "../../services/conquistas/CreateConquistaGeralService";
 
 class CreateConquistasController {
   async handle(req:Request, res:Response) {
 
     // Dados do corpo da requisição
-    const { name, description, type, objective, objective_secondary, discipline, difficulty  } = req.body;
+    const { name, description, type, domain, objective, objective_secondary, id_disciplina, difficulty  } = req.body;
 
     // Repositório do modelo secretaria do Prisma
     const prismaConquistasRepository = new PrismaConquistasRepository();
 
-    // Service da Secretaria
-    const createConquistasService = new CreateConquistasService(prismaConquistasRepository);
+    // * As conquistas podem ser GERAIS ou ESPECÍFICAS por matéria
+    // ? Cada uma possui seu próprio service
 
-    // Executando o service
-    const conquista = await createConquistasService.execute({
-      name, 
-      description,
-      type, 
-      objective, 
-      objective_secondary, 
-      discipline, 
-      difficulty
-    })
+    let conquista;
+
+    if (domain === "specific") {
+      // TODO: Chama o service da conquista específica
+      
+      const prismaDisciplinasRepository = new PrismaDisciplinasRepository();
+      const createConquistaEspecificaService = new CreateConquistaEspecificaService(prismaConquistasRepository, prismaDisciplinasRepository);
+
+      conquista= await createConquistaEspecificaService.execute({
+        name, 
+        description,
+        type, 
+        domain,
+        objective, 
+        objective_secondary, 
+        id_disciplina, 
+        difficulty
+      });
+    } 
+
+    else if (domain === "general") {
+      // TODO: Chama o service da conquista geral
+
+      const prismaDisciplinasRepository = new PrismaDisciplinasRepository();
+      const createConquistaGeralService = new CreateConquistaGeralService(prismaConquistasRepository);
+
+      conquista = await createConquistaGeralService.execute({
+        name, 
+        description,
+        type, 
+        domain,
+        objective, 
+        objective_secondary, 
+        id_disciplina, 
+        difficulty
+      });
+    }
 
     // Caso aconteça algum erro, interrompe o processo retorna a mensagem de erro
     if(conquista instanceof Error) {

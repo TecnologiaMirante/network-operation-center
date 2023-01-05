@@ -1,5 +1,6 @@
 import { prisma } from "../../../prisma";
 import { AlunoRespondeAtividadeCreateData, AlunoRespondeAtividadesRepository, AlunoRespondeAtividadeFind, AlunoRespondeAtividadeDelete, AlunoRespondeAtividadeUpdate, AlunoRespondeAtividadeFindByDisciplinaAluno } from "../../interfaces/alunos/aluno-responde-atividade";
+import { io } from "../../../http";
 
 export class PrismaAlunoRespondeAtividadesRepository implements AlunoRespondeAtividadesRepository {
 
@@ -58,8 +59,63 @@ export class PrismaAlunoRespondeAtividadesRepository implements AlunoRespondeAti
 
     let points = nota * 10;
 
+
+
     // Se ele não tiver respondido uma, então é a 1ª tentativa
     if (Object.keys(ja_respondeu).length == 1) {
+
+      console.log("Primeira vez");
+
+      // * TESTE CONQUISTA ATIVIDADE --------------------------------------
+
+      // Inicialmente verificando se existe alguma conquista de média já criada
+      const conquistas_atividade = await prisma.conquista.findMany({
+        where: {
+          type: "RESPONDA_X_ATIVIDADE"
+        },
+      })
+
+      // Se existir
+      if (conquistas_atividade.length > 0) { 
+
+        // Percorre todas as conquistas para verificar o progresso do aluno em cada uma
+        for (let conquista of conquistas_atividade) {
+
+          // Verifica os dados do aluno com relação a esta conquista
+          const aluno_conquista = await prisma.aluno_has_conquista.findFirst({
+            where: {
+              id_aluno,
+            }
+          })
+
+          const current = Object(aluno_conquista).current + 1;
+          const progress = (current/conquista.objective) * 100;
+
+          await prisma.aluno_has_conquista.update({
+            where: {
+              id: Object(aluno_conquista).id,
+            },
+            data: {
+              current: current,
+              progress: progress
+            }
+          })
+
+          io.on("conquistas", async (socket) => {
+            const teste = "sim, a conquista funciona!";
+
+            if(progress === 100) {
+              console.log("funciona")
+              socket.emmit("teste_atividade", teste);
+            }
+          })
+        }
+      } 
+      else {
+        console.log("Conquista não existente!")
+      }
+
+      // * --------------------------------------------------------------------------------
 
       // Atualiza a pontuação
       // Verificando a pontuação atual do aluno
@@ -135,8 +191,6 @@ export class PrismaAlunoRespondeAtividadesRepository implements AlunoRespondeAti
       });
 
       disciplina = Object(disciplina).Conteudo_has_itens[0]
-
-      // // Descomentar depois
 
       // Salvando o id da mesma
       const id_disciplina = Object(disciplina).conteudo.disciplina.id;
@@ -242,6 +296,63 @@ export class PrismaAlunoRespondeAtividadesRepository implements AlunoRespondeAti
           }
         })
       }
+
+      io.on("conquistas", async (socket) => {
+
+        // * CONQUISTA DA MÉDIA =================================================
+  
+        // ? Verificando para a conquista geral
+        
+        console.log("media: ",media)
+  
+        // Inicialmente verificando se existe alguma conquista de média já criada
+        const conquistas_media = await prisma.conquista.findMany({
+          where: {
+            type: "ALCANCE_MEDIA_X"
+          },
+        })
+  
+        // Se existir
+        if (conquistas_media.length > 0) { 
+  
+          // Percorre todas as conquistas para verificar o progresso do aluno em cada uma
+          for (let conquista of conquistas_media) {
+  
+            // Verifica os dados do aluno com relação a esta conquista
+            const aluno_conquista = await prisma.aluno_has_conquista.findFirst({
+              where: {
+                id_aluno,
+              }
+            })
+  
+            // Verificando se a média do aluno corresponde com o objetivo da conquista
+            if (media == conquista.objective) {
+  
+              const current = Object(aluno_conquista).current + 1;
+              const progress = (current/conquista.objective) * 100;
+  
+              await prisma.aluno_has_conquista.update({
+                where: {
+                  id: Object(aluno_conquista).id,
+                },
+                data: {
+                  current: current,
+                  progress: progress
+                }
+              })
+  
+              if (progress == 100) {
+                const teste = "sim, a conquista funciona!";
+                socket.emmit("teste_media", teste);
+              }
+            }
+          }
+        } 
+        else {
+          console.log("Conquista não existente!")
+        }
+
+      })
     }
 
     // Tentativas

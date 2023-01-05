@@ -15,9 +15,9 @@ import { UpdateRoomSocketService } from "./services/rooms/userRooms/UpdateUserRo
 import { CreateUserRoomSocketService } from "./services/rooms/userRooms/CreateUserRoomSocketService";
 import { GetOpenRoomsService } from "./services/rooms/GetOpenRoomsService";
 
-// CASO DE USO: Entrar no chat de dúvidas com o professor
+// * CASO DE USO: Entrar no chat de dúvidas com o professor
 //
-// DESCRIÇÃO: 
+// * DESCRIÇÃO: 
 // O Aluno vai clicar no botão de "dúvidas" (APP) e duas situações podem acontecer:
 // 1 - É a primeira vez que o aluno vai entrar na sala, então...
 //      - A sala será criada
@@ -27,6 +27,16 @@ import { GetOpenRoomsService } from "./services/rooms/GetOpenRoomsService";
 // 2 - Não é a primeira vez que o aluno vai entrar na sala, então...
 //      - O usuário será conectado a sala
 
+// * O Professor também vai entrar no chat, porém via WEB
+// Ele só vai entrar nas salas já existentes
+// Ao entrar na sala, as mensagens serão carregadas
+
+
+// ? EXPLICAÇÃO DAS VARIÁVEIS
+//
+// id_aluno: o id do aluno
+// id_professor: o id do professor
+// id_connected: o id da tabela USER que serve tanto para aluno, quanto professor. Ela serve para mostrar quem está conectado na sala;
 
 interface definitionInterface2{
   (message:string):void;
@@ -63,10 +73,18 @@ io.on("connection", (socket) => {
 
     let result: definitionInterfaceBase;
 
-    // Após o usuário se conectar (Aluno/Professor), o evento tem como parâmetros o "id_aluno" e o "id_professor"
+    // Após o usuário se conectar (Aluno/Professor), o evento tem como parâmetros o "id_aluno", "id_professor" e "id_connected"
     socket.on("select_room", async (data, callback:definitionInterface) => {
 
       const id_name = data.id_professor + data.id_aluno;
+
+
+
+      console.log("------------------")
+      console.log(data.id_professor)
+      console.log(id_name)
+      console.log(data.id_aluno)
+      console.log("------------------")
 
       const prismaAlunosRepository = new PrismaAlunosRepository();
       const prismaProfessoresRepository = new PrismaProfessoresRepository();
@@ -86,8 +104,6 @@ io.on("connection", (socket) => {
       // Se ela existir, conecta o aluno a sala
       if (room) {
 
-        console.log(room)
-
         // Conectando o aluno a sala
         socket.join(Object(room).id_name);
 
@@ -106,7 +122,6 @@ io.on("connection", (socket) => {
 
         // Se não...
         else {
-
           // Adiciona o usuário à sala
           await addUserRoomSocketService.execute({ id_room: Object(room).id, id_socket: socket.id, id_connected: data.id_connected });
         }
@@ -126,6 +141,7 @@ io.on("connection", (socket) => {
             }
           }
 
+          // Adicionando as mensagens ao array de saída formatada
           final_messages.push(msg_aux);
         }
       }
@@ -151,7 +167,7 @@ io.on("connection", (socket) => {
           id_socket: socket.id,
         })
 
-        // Neste momento do código iremos verificar as salas abertas e retorná-las para o professor em tempo real
+        // Neste momento do código, iremos verificar as salas abertas e retorná-las para o professor em tempo real
         const getOpenUserRooms = new GetOpenRoomsService(prismaRoomsRepository, prismaProfessoresRepository);
         
         // Verificando as salas abertas com este professor
@@ -163,14 +179,11 @@ io.on("connection", (socket) => {
         socket.emit("open_chats", openRooms);
       }
 
-      
       // Organizando os dados finais
       result = {
         room_id: Object(room).id,
         messages: final_messages
       }
-      
-      console.log(result)
 
       // Retornando os dados por callback
       callback(
@@ -179,11 +192,11 @@ io.on("connection", (socket) => {
 
     });
   
+    // Evento de enviar a mensagem
     socket.on("send_message", async (data, callback:definitionInterface2) => {
       
+      // Retornando as mensagens enviadas para todos da sala
       io.emit("received_message", data);
-
-      console.log(data);
 
       // Salvando a mensagem no banco
       const createMessageService = new CreateMessageService(prismaRoomsRepository, prismaEscolaUsersRepository, prismaMessagesRepository);
@@ -197,20 +210,22 @@ io.on("connection", (socket) => {
         return new Error("Erro ao criar a mensagem");
       }
 
-      callback("Message Receive")
+      callback("Message Received")
     });
   
+    // Evento para desconectar o socket
     socket.on("disconnect", () => {
       console.log("user disconnected");
     });
+});
+
+// Função para pegar as mensagens da sala
+async function getMessagesRoomFunction(id_room: string, prismaMessagesRepository: PrismaMessagesRepository, prismaRoomsRepository: PrismaRoomsRepository) {
+  const getMessagesByRoom = new GetMessagesByRoomService(prismaRoomsRepository, prismaMessagesRepository);
+
+  const messages = await getMessagesByRoom.execute({
+    id_room
   });
 
-  async function getMessagesRoomFunction(id_room: string, prismaMessagesRepository: PrismaMessagesRepository, prismaRoomsRepository: PrismaRoomsRepository) {
-    const getMessagesByRoom = new GetMessagesByRoomService(prismaRoomsRepository, prismaMessagesRepository);
-
-    const messages = await getMessagesByRoom.execute({
-      id_room
-    });
-
-    return messages;
-  }
+  return messages;
+}
