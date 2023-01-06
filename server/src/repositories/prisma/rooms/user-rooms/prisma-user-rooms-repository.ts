@@ -52,10 +52,18 @@ export class PrismaUserRoomsRepository implements UserRoomsRepository {
       })
     };
 
-    async updateSocketUserRoom({ id_connected, id_socket }: UserRoomUpdateSocketUserRoom) {
+    async updateSocketUserRoom({ id_room, id_connected, id_socket }: UserRoomUpdateSocketUserRoom) {
+
+      const userRoom = await prisma.userRoom.findFirst({
+        where: {
+          id_room,
+          id_connected
+        }
+      })
+
       return await prisma.userRoom.update({
         where: {
-          id_connected,
+          id: Object(userRoom).id,
         },
         data: {
           id_socket

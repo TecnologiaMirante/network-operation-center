@@ -20,8 +20,9 @@ export interface UserRoomUpdate {
 }
 
 export interface UserRoomUpdateSocketUserRoom {
-    id_connected: string;
+    id_room: string;
     id_socket: string;
+    id_connected: string;
 }
 
 export interface UserRoomAddUser {

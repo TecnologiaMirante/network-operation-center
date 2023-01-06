@@ -63,7 +63,7 @@ interface definitionInterface{
 }
 
 // Realizando conexão
-io.on("connection", (socket) => {
+module.exports = io.on("connection", (socket) => {
 
     // Repositories
     const prismaRoomsRepository = new PrismaRoomsRepository();
@@ -76,15 +76,9 @@ io.on("connection", (socket) => {
     // Após o usuário se conectar (Aluno/Professor), o evento tem como parâmetros o "id_aluno", "id_professor" e "id_connected"
     socket.on("select_room", async (data, callback:definitionInterface) => {
 
+      console.log(data)
+
       const id_name = data.id_professor + data.id_aluno;
-
-
-
-      console.log("------------------")
-      console.log(data.id_professor)
-      console.log(id_name)
-      console.log(data.id_aluno)
-      console.log("------------------")
 
       const prismaAlunosRepository = new PrismaAlunosRepository();
       const prismaProfessoresRepository = new PrismaProfessoresRepository();
@@ -195,6 +189,8 @@ io.on("connection", (socket) => {
     // Evento de enviar a mensagem
     socket.on("send_message", async (data, callback:definitionInterface2) => {
       
+      console.log(data)
+
       // Retornando as mensagens enviadas para todos da sala
       io.emit("received_message", data);
 
@@ -219,6 +215,15 @@ io.on("connection", (socket) => {
     });
 });
 
+//   io.of("/conquistas").on("connection", (socket) => {
+
+//   console.log("Conectado /conquistas");
+
+//   socket.on("teste_conquista", () => {
+//     console.log("Entrou no teste_conquista")
+//   })
+// })
+
 // Função para pegar as mensagens da sala
 async function getMessagesRoomFunction(id_room: string, prismaMessagesRepository: PrismaMessagesRepository, prismaRoomsRepository: PrismaRoomsRepository) {
   const getMessagesByRoom = new GetMessagesByRoomService(prismaRoomsRepository, prismaMessagesRepository);
@@ -229,3 +234,5 @@ async function getMessagesRoomFunction(id_room: string, prismaMessagesRepository
 
   return messages;
 }
+
+// export { io };

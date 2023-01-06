@@ -919,9 +919,9 @@ model UserRoom {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  id_socket String? @unique
+  id_socket String @unique
 
-  id_connected String? @unique
+  id_connected String
 
   id_room String
   room    Room   @relation(fields: [id_room], references: [id], onDelete: Cascade, onUpdate: Cascade)

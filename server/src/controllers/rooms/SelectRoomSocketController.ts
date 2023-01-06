@@ -1,0 +1,5 @@
+class SelectRoomSocketController {
+    async handle() {
+        
+    }
+}

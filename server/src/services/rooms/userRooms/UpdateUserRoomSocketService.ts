@@ -30,6 +30,7 @@ export class UpdateRoomSocketService {
 
     // Atualizando ...
     const room = await this.userRoomsRepository.updateSocketUserRoom({
+      id_room,
       id_socket,
       id_connected
     })

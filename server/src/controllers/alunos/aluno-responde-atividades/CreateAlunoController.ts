@@ -4,6 +4,7 @@ import { PrismaAlunosRepository } from "../../../repositories/prisma/alunos/pris
 import { PrismaAtividadesRepository } from "../../../repositories/prisma/atividades/prisma-atividades-repository";
 import { PrismaBimestresRepository } from "../../../repositories/prisma/bimestres/prisma-bimestres-repository";
 import { CreateAlunoRespondeAtividadeService } from "../../../services/alunos/aluno-responde-atividades/CreateAlunoRespondeAtividadeService";
+import { io } from "../../../http";
 
 class CreateAlunoRespondeAtividadeController {
   async handle(req:Request, res:Response) {

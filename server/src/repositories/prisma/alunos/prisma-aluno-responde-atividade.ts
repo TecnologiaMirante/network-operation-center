@@ -66,7 +66,7 @@ export class PrismaAlunoRespondeAtividadesRepository implements AlunoRespondeAti
 
       console.log("Primeira vez");
 
-      // * TESTE CONQUISTA ATIVIDADE --------------------------------------
+      // * TESTE CONQUISTA ATIVIDADE ------------------------------------------------------------------------------------------------
 
       // Inicialmente verificando se existe alguma conquista de média já criada
       const conquistas_atividade = await prisma.conquista.findMany({
@@ -85,6 +85,7 @@ export class PrismaAlunoRespondeAtividadesRepository implements AlunoRespondeAti
           const aluno_conquista = await prisma.aluno_has_conquista.findFirst({
             where: {
               id_aluno,
+              id_conquista: conquista.id
             }
           })
 
@@ -101,21 +102,28 @@ export class PrismaAlunoRespondeAtividadesRepository implements AlunoRespondeAti
             }
           })
 
-          io.on("conquistas", async (socket) => {
-            const teste = "sim, a conquista funciona!";
+          console.log(Object(aluno_conquista).current)
+          console.log(current)
+          console.log(conquista.objective)
+          console.log(progress)
 
-            if(progress === 100) {
-              console.log("funciona")
-              socket.emmit("teste_atividade", teste);
-            }
-          })
+          if(progress === 100) {
+            console.log("progresso foi")
+
+            io.of("/conquistas").on("connection", socket => {
+              console.log("FUNCIONOU PORRA")
+              const teste = "sim, a conquista funciona!";
+              socket.emit("RESPONDA_X_ATIVIDADE", teste)
+            })
+
+          }
         }
       } 
       else {
         console.log("Conquista não existente!")
       }
 
-      // * --------------------------------------------------------------------------------
+      // * ---------------------------------------------------------------------------------------------------------------
 
       // Atualiza a pontuação
       // Verificando a pontuação atual do aluno
@@ -470,3 +478,5 @@ export class PrismaAlunoRespondeAtividadesRepository implements AlunoRespondeAti
     })
   };
 }
+
+
