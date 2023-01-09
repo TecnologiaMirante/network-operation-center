@@ -14,6 +14,13 @@ import { GetMessagesByRoomService } from "./services/messages/GetMessagesByRoomS
 import { UpdateRoomSocketService } from "./services/rooms/userRooms/UpdateUserRoomSocketService";
 import { CreateUserRoomSocketService } from "./services/rooms/userRooms/CreateUserRoomSocketService";
 import { GetOpenRoomsService } from "./services/rooms/GetOpenRoomsService";
+import { SelectRoomSocketController } from "./controllers/rooms/SelectRoomSocketController";
+import { CreateAlunoRespondeAtividadeController } from "./controllers/alunos/aluno-responde-atividades/CreateAlunoRespondeAtividadeController";
+import { CheckResponda_X_AtividadesController } from "./controllers/conquistas/CheckResponda_X_AtividadesController";
+import { Request, Response } from "express";
+import { CheckResponda_X_AtividadesService } from "./services/conquistas/responda_x_atividades/CheckResponda_x_atividadesService";
+import { PrismaConquistasRepository } from "./repositories/prisma/conquistas/prisma-conquistas-repository";
+import { PrismaResponda_X_AtividadesRepository } from "./repositories/prisma/conquistas/responda_x_atividades/prisma-responda_x_atividades-repository";
 
 // * CASO DE USO: Entrar no chat de dúvidas com o professor
 //
@@ -213,16 +220,45 @@ module.exports = io.on("connection", (socket) => {
     socket.on("disconnect", () => {
       console.log("user disconnected");
     });
+
 });
 
-//   io.of("/conquistas").on("connection", (socket) => {
+module.exports = io.of("/conquistas").on("connection", (socket) => {
 
-//   console.log("Conectado /conquistas");
+  console.log("Conexão com '/conquistas' realizado!")
+  
+  socket.on("RESPONDA_X_ATIVIDADES", async (data, callback) => {
+    
+    console.log("chegou")
 
-//   socket.on("teste_conquista", () => {
-//     console.log("Entrou no teste_conquista")
-//   })
-// })
+    // Repositories
+    const conquistasRepository = new PrismaConquistasRepository();
+    const prismaResponda_X_AtividadesRepository = new PrismaResponda_X_AtividadesRepository();
+    const checkResponda_X_AtividadesService = new CheckResponda_X_AtividadesService(conquistasRepository, prismaResponda_X_AtividadesRepository);
+
+    const resposta = await checkResponda_X_AtividadesService.execute({ id_aluno: data.id_aluno });
+    console.log(resposta)
+
+    callback("Ok")
+  })
+
+
+  // TODO: O JEITO QUE DEU MAIS CERTO ====================================================
+
+  // const controller = new CheckResponda_X_AtividadesController()
+  // controller.handle(socket)
+  
+  // const controller2 = new CreateAlunoRespondeAtividadeController()
+  // controller2.handle(socket)
+
+  // new CheckResponda_X_AtividadesController().handle
+
+  // Evento para desconectar o socket
+  socket.on("disconnect", () => {
+    console.log("user disconnected");
+  });
+
+})
 
 // Função para pegar as mensagens da sala
 async function getMessagesRoomFunction(id_room: string, prismaMessagesRepository: PrismaMessagesRepository, prismaRoomsRepository: PrismaRoomsRepository) {

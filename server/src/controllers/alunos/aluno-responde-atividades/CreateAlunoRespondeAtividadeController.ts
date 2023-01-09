@@ -5,6 +5,7 @@ import { PrismaAtividadesRepository } from "../../../repositories/prisma/ativida
 import { PrismaBimestresRepository } from "../../../repositories/prisma/bimestres/prisma-bimestres-repository";
 import { CreateAlunoRespondeAtividadeService } from "../../../services/alunos/aluno-responde-atividades/CreateAlunoRespondeAtividadeService";
 import { io } from "../../../http";
+import { Socket } from "socket.io";
 
 class CreateAlunoRespondeAtividadeController {
   async handle(req:Request, res:Response) {
@@ -33,6 +34,8 @@ class CreateAlunoRespondeAtividadeController {
     if(alunoRespondeAtv instanceof Error) {
       return res.status(400).send(alunoRespondeAtv.message);
     }
+
+    console.log("Chegou no aluno eeeeeee")
 
     // Retornando mensagem de sucesso para o usuário
     return res.status(201).send(

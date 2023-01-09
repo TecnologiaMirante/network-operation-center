@@ -2,7 +2,7 @@ import { Router } from "express";
 import { multerConfig } from "../config/multer";
 import multer from "multer";
 
-import { CreateAlunoRespondeAtividadeController } from "../controllers/alunos/aluno-responde-atividades/CreateAlunoController";
+import { CreateAlunoRespondeAtividadeController } from "../controllers/alunos/aluno-responde-atividades/CreateAlunoRespondeAtividadeController";
 // import { UpdateAlunoRespondeAtividadeController } from "../controllers/alunos/aluno-responde-atividades/UpdateAlunoController";
 import { CreateAlunoController } from "../controllers/alunos/CreateAlunoController";
 import { DeleteAlunoController } from "../controllers/alunos/DeleteAlunoController";
