@@ -445,71 +445,67 @@ export class PrismaAlunoRespondeAtividadesRepository implements AlunoRespondeAti
 
     let points = nota * 10;
 
-
-
     // Se ele não tiver respondido uma, então é a 1ª tentativa
     if (Object.keys(ja_respondeu).length == 1) {
 
-      console.log("Primeira vez");
+      // // * TESTE CONQUISTA ATIVIDADE ------------------------------------------------------------------------------------------------
 
-      // * TESTE CONQUISTA ATIVIDADE ------------------------------------------------------------------------------------------------
+      // // Inicialmente verificando se existe alguma conquista de média já criada
+      // const conquistas_atividade = await prisma.conquista.findMany({
+      //   where: {
+      //     type: "RESPONDA_X_ATIVIDADE"
+      //   },
+      // })
 
-      // Inicialmente verificando se existe alguma conquista de média já criada
-      const conquistas_atividade = await prisma.conquista.findMany({
-        where: {
-          type: "RESPONDA_X_ATIVIDADE"
-        },
-      })
+      // // Se existir
+      // if (conquistas_atividade.length > 0) { 
 
-      // Se existir
-      if (conquistas_atividade.length > 0) { 
+      //   // Percorre todas as conquistas para verificar o progresso do aluno em cada uma
+      //   for (let conquista of conquistas_atividade) {
 
-        // Percorre todas as conquistas para verificar o progresso do aluno em cada uma
-        for (let conquista of conquistas_atividade) {
+      //     // Verifica os dados do aluno com relação a esta conquista
+      //     const aluno_conquista = await prisma.aluno_has_conquista.findFirst({
+      //       where: {
+      //         id_aluno,
+      //         id_conquista: conquista.id
+      //       }
+      //     })
 
-          // Verifica os dados do aluno com relação a esta conquista
-          const aluno_conquista = await prisma.aluno_has_conquista.findFirst({
-            where: {
-              id_aluno,
-              id_conquista: conquista.id
-            }
-          })
+      //     const current = Object(aluno_conquista).current + 1;
+      //     const progress = (current/conquista.objective) * 100;
 
-          const current = Object(aluno_conquista).current + 1;
-          const progress = (current/conquista.objective) * 100;
+      //     await prisma.aluno_has_conquista.update({
+      //       where: {
+      //         id: Object(aluno_conquista).id,
+      //       },
+      //       data: {
+      //         current: current,
+      //         progress: progress
+      //       }
+      //     })
 
-          await prisma.aluno_has_conquista.update({
-            where: {
-              id: Object(aluno_conquista).id,
-            },
-            data: {
-              current: current,
-              progress: progress
-            }
-          })
+      //     console.log(Object(aluno_conquista).current)
+      //     console.log(current)
+      //     console.log(conquista.objective)
+      //     console.log(progress)
 
-          console.log(Object(aluno_conquista).current)
-          console.log(current)
-          console.log(conquista.objective)
-          console.log(progress)
+      //     if(progress === 100) {
+      //       console.log("progresso foi")
 
-          if(progress === 100) {
-            console.log("progresso foi")
+      //       io.of("/conquistas2teste").on("connection", socket => {
+      //         console.log("FUNCIONOU, PORRA")
+      //         const teste = "sim, a conquista funciona!";
+      //         socket.emit("RESPONDA_X_ATIVIDADE", teste)
+      //       })
 
-            io.of("/conquistas2teste").on("connection", socket => {
-              console.log("FUNCIONOU, PORRA")
-              const teste = "sim, a conquista funciona!";
-              socket.emit("RESPONDA_X_ATIVIDADE", teste)
-            })
+      //     }
+      //   }
+      // } 
+      // else {
+      //   console.log("Conquista não existente!")
+      // }
 
-          }
-        }
-      } 
-      else {
-        console.log("Conquista não existente!")
-      }
-
-      // * ---------------------------------------------------------------------------------------------------------------
+      // // * ---------------------------------------------------------------------------------------------------------------
 
       // Atualiza a pontuação
       // Verificando a pontuação atual do aluno

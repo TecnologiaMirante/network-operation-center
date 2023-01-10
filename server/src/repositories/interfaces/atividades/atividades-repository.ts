@@ -42,12 +42,17 @@ export interface AtividadeUpdate {
     id_serie?: string;
 }
 
+export interface AtividadeGetIdDisciplina {
+    id: string;
+}
+
 export interface AtividadesRepository {
     create: (data: AtividadeCreateData) => Promise<Object>;
     get: () => Promise<Object>;
     getQuestoes: (data: AtividadeGetQuestoes) => Promise<Object>;
     getQuestoesID: (data: AtividadeGetQuestoesID) => Promise<Object>;
     getByDisciplina: (data: AtividadeGetByDisciplinas) => Promise<Object>;
+    getIdDisciplina: (data: AtividadeGetIdDisciplina) => Promise<Object | null>;
     findEssentialData: (data: AtividadeFindEssentialData) => Promise<Object | null>;
     find: (data: AtividadeFind) => Promise<Object | null>;
     findWebView: (data: AtividadeFindWebView) => Promise<Object | null>;

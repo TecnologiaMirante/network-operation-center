@@ -1,5 +1,5 @@
 import { prisma } from "../../../prisma";
-import { AtividadeCreateData, AtividadesRepository, AtividadeFind, AtividadeDelete, AtividadeUpdate, AtividadeGetQuestoes, AtividadeFindEssentialData, AtividadeGetByDisciplinas, AtividadeGetQuestoesID, AtividadeFindWebView } from "../../interfaces/atividades/atividades-repository";
+import { AtividadeCreateData, AtividadesRepository, AtividadeFind, AtividadeDelete, AtividadeUpdate, AtividadeGetQuestoes, AtividadeFindEssentialData, AtividadeGetByDisciplinas, AtividadeGetQuestoesID, AtividadeFindWebView, AtividadeGetIdDisciplina } from "../../interfaces/atividades/atividades-repository";
 
 export class PrismaAtividadesRepository implements AtividadesRepository {
 
@@ -286,6 +286,19 @@ export class PrismaAtividadesRepository implements AtividadesRepository {
     })
 
     return atividades_base;
+  }
+
+  async getIdDisciplina({ id }: AtividadeGetIdDisciplina) {
+    const atividade = await prisma.atividade.findUnique({
+      where: {
+        id
+      },
+      select: {
+        id_disciplina: true
+      }
+    })
+
+    return atividade;
   }
 
   async findEssentialData({ id }: AtividadeFindEssentialData) {

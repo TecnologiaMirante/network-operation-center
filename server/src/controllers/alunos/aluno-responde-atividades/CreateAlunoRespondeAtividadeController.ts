@@ -6,6 +6,11 @@ import { PrismaBimestresRepository } from "../../../repositories/prisma/bimestre
 import { CreateAlunoRespondeAtividadeService } from "../../../services/alunos/aluno-responde-atividades/CreateAlunoRespondeAtividadeService";
 import { io } from "../../../http";
 import { Socket } from "socket.io";
+import { CheckIfExistsResponda_X_AtividadesService } from "../../../services/conquistas/responda_x_atividades/CheckIfExistsResponda_X_AtividadesService";
+import { PrismaConquistasRepository } from "../../../repositories/prisma/conquistas/prisma-conquistas-repository";
+import { PrismaResponda_X_AtividadesRepository } from "../../../repositories/prisma/conquistas/responda_x_atividades/prisma-responda_x_atividades-repository";
+import { GetAtividadeIdDisciplinaService } from "../../../services/atividades/GetAtividadeIdDisciplinaService";
+import { UpdateProgressResponda_X_AtividadesService } from "../../../services/conquistas/responda_x_atividades/UpdateProgressResponda_x_atividadesService";
 
 class CreateAlunoRespondeAtividadeController {
   async handle(req:Request, res:Response) {
@@ -35,7 +40,35 @@ class CreateAlunoRespondeAtividadeController {
       return res.status(400).send(alunoRespondeAtv.message);
     }
 
-    console.log("Chegou no aluno eeeeeee")
+    // Buscando o id da disciplina da atividade
+    const getAtividadeIdDisciplinaService = new GetAtividadeIdDisciplinaService(prismaAtividadesRepository);
+    const result = await getAtividadeIdDisciplinaService.execute({ id: id_atividade });
+
+    if (result instanceof Error) {
+      return res.status(400).send(result.message);
+    }
+
+    // TODO: Fazer o service pra atualizar o progresso na conquista, se existir
+    const prismaResponda_X_AtividadesRepository = new PrismaResponda_X_AtividadesRepository();
+    
+    // * Verificar se a conquista existe
+    const checkIfExists = new CheckIfExistsResponda_X_AtividadesService(prismaResponda_X_AtividadesRepository);
+    const conquistas = await checkIfExists.execute({ id_disciplina: Object(result).id_disciplina });
+    
+    if (conquistas instanceof Error) {
+      return res.status(400).send(conquistas.message);
+    }
+
+    // * Se existir, atualiza o progresso
+    if (conquistas.length > 0) {
+
+      // ? Chama o service de atualizar o progresso
+      const updateConquistas = new UpdateProgressResponda_X_AtividadesService(prismaResponda_X_AtividadesRepository);
+      const conquistasAtualizadas = await updateConquistas.execute({ id_aluno, conquistas })
+
+    }
+
+    // TODO: Chama o service pra ver se a conquista foi desbloqueada  (SOCKET chama no websocket.ts)
 
     // Retornando mensagem de sucesso para o usuário
     return res.status(201).send(

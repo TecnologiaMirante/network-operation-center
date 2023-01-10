@@ -1,5 +1,5 @@
-export interface ConquistasId {
-    id_conquista: string;
+export interface Conquista {
+    id: string;
     name: string;
     description: string;
     type: string;
@@ -14,14 +14,23 @@ export interface Responda_X_AtividadesGetByAluno {
     id_aluno: string;
 }
 
-export interface Responda_X_AtividadesCheckProgressByAluno {
-    conquistas: ConquistasId[]
+export interface Responda_X_AtividadesGet {
+    id_disciplina: string;
+}
+
+export interface Responda_X_AtividadesCheckUnlockedByAluno {
+    conquistas: Conquista[]
     id_aluno: string;
 }
 
+export interface Responda_X_AtividadesUpdateProgress {
+    conquistas: Conquista[]
+    id_aluno: string;
+}
 
 export interface Responda_X_AtividadesRepository {
-    get: () => Promise<Object>;
+    get: (data: Responda_X_AtividadesGet) => Promise<Object>;
     getByAluno: (data: Responda_X_AtividadesGetByAluno) => Promise<Object>;
-    checkProgressByAluno: (data: Responda_X_AtividadesCheckProgressByAluno) => Promise<Object>;
+    checkUnlockedByAluno: (data: Responda_X_AtividadesCheckUnlockedByAluno) => Promise<Object>;
+    updateProgressByAluno: (data: Responda_X_AtividadesUpdateProgress) => Promise<void>;
 }

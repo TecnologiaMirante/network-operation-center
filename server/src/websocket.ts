@@ -232,11 +232,10 @@ module.exports = io.of("/conquistas").on("connection", (socket) => {
     console.log("chegou")
 
     // Repositories
-    const conquistasRepository = new PrismaConquistasRepository();
     const prismaResponda_X_AtividadesRepository = new PrismaResponda_X_AtividadesRepository();
-    const checkResponda_X_AtividadesService = new CheckResponda_X_AtividadesService(conquistasRepository, prismaResponda_X_AtividadesRepository);
+    const checkResponda_X_AtividadesService = new CheckResponda_X_AtividadesService(prismaResponda_X_AtividadesRepository);
 
-    const resposta = await checkResponda_X_AtividadesService.execute({ id_aluno: data.id_aluno });
+    const resposta = await checkResponda_X_AtividadesService.execute({ id_aluno: data.id_aluno, id_disciplina: data.id_disciplina });
     console.log(resposta)
 
     callback("Ok")
