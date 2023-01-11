@@ -2,13 +2,12 @@ import { RoomsRepository } from "../../repositories/interfaces/rooms/rooms-repos
 import { MessagesRepository } from "../../repositories/interfaces/messages/messages-repository";
 
 // Interface
-interface GetMessagesByRoomRequest {
-  type: string;
+interface GetMobileMessagesByRoomRequest {
   id_room: string;
 }
 
 // Service
-export class GetMessagesByRoomService {
+export class GetMobileMessagesByRoomService {
   
   // Recebendo o repositório da Aluno no construtor
   constructor(
@@ -17,10 +16,10 @@ export class GetMessagesByRoomService {
   ) {}
 
   // Executando o service
-  async execute(request: GetMessagesByRoomRequest) {
+  async execute(request: GetMobileMessagesByRoomRequest) {
     
     // Dados do service
-    const { type, id_room } = request;
+    const { id_room } = request;
 
     // Verificando se a sala existe
     if(!(await this.roomsRepository.find({id: id_room}))){
@@ -34,8 +33,7 @@ export class GetMessagesByRoomService {
 
 
     // Buscando ...
-    const messages = await this.messagesRepository.getMessagesByRoom({
-      type,
+    const messages = await this.messagesRepository.getMobileMessagesByRoom({
       id_room,
     })
 

@@ -10,6 +10,7 @@ export interface MessageFind {
 }
 
 export interface GetMessagesByRoom {
+    type: string;
     id_room: string;
 }
 

@@ -201,6 +201,7 @@ import { GetDadosBIAulasController } from "../controllers/dados/GetDadosBIAulasC
 import { FindConteudoBySerieDisciplinaController } from "../controllers/conteudos/FindConteudoBySerieDisciplinaController";
 import { FindAtividadeWebViewController } from "../controllers/atividades/FindAtividadeWebViewController";
 import { GetOpenRoomsController } from "../controllers/rooms/GetOpenRoomsSocketController";
+import { UpdateLembreteController } from "../controllers/lembretes/UpdateLembreteController";
 
 const router = Router();
 
@@ -340,7 +341,6 @@ router
 // #professores-aulas
 router
   .route("/conteudo/:id_serie/:id_disciplina")
-  // .route("/escolas/users/professores/aulas/series/:id_serie/:id_disciplina")
   .get(new GetAulasBySerieDisciplinaProfessorController().handle)
 
 // #professores-disciplinas
@@ -688,6 +688,7 @@ router
 // Lembretes
 router
   .route("/lembretes/:id")
+  .put(new UpdateLembreteController().handle)
   .delete(new DeleteLembreteController().handle)
 
 router

@@ -60,6 +60,13 @@ type Message = {
   user: User;
 }
 
+type Message_Raw = {
+  id: string;
+  text: string;
+  created_at: Date;
+  user: User;
+}
+
 type definitionInterfaceBase = {
   room_id: string;
   messages: Message[] | null;
@@ -128,8 +135,9 @@ module.exports = io.on("connection", (socket) => {
         }
 
         // Pegando todas as mensagens da sala
-        const messsages_raw = await getMessagesRoomFunction(Object(room).id, prismaMessagesRepository, prismaRoomsRepository);
-        const mes = [...Object.values(messsages_raw)];
+        const messages_raw = await getMessagesRoomFunction(data.type, Object(room).id, prismaMessagesRepository, prismaRoomsRepository);
+   
+        const mes = [...Object.values(messages_raw)];
 
         // Percorrendo as mensagens da sala
         for (let msg of mes) {
@@ -259,15 +267,17 @@ module.exports = io.of("/conquistas").on("connection", (socket) => {
 
 })
 
-// Função para pegar as mensagens da sala
-async function getMessagesRoomFunction(id_room: string, prismaMessagesRepository: PrismaMessagesRepository, prismaRoomsRepository: PrismaRoomsRepository) {
+
+
+async function getMessagesRoomFunction(type: string, id_room: string, prismaMessagesRepository: PrismaMessagesRepository, prismaRoomsRepository: PrismaRoomsRepository) {
+  
   const getMessagesByRoom = new GetMessagesByRoomService(prismaRoomsRepository, prismaMessagesRepository);
 
   const messages = await getMessagesByRoom.execute({
+    type,
     id_room
   });
 
   return messages;
-}
 
-// export { io };
+}
