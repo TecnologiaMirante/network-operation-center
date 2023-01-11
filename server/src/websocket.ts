@@ -76,6 +76,22 @@ interface definitionInterface{
   (messages: definitionInterfaceBase): void;
 }
 
+type Conquista = {
+  name: string;
+  description: string;
+  objective: 1
+}
+
+type ConquistaUnlockedType = {
+  conquista: Conquista;
+  status: boolean;
+}
+
+interface ConquistaUnlockedCallback {
+  // (messages: definitionInterfaceBase): void;
+  (message: ConquistaUnlockedType[] | 0): void;
+}
+
 // Realizando conexão
 module.exports = io.on("connection", (socket) => {
 
@@ -244,9 +260,8 @@ module.exports = io.of("/conquistas").on("connection", (socket) => {
     const checkResponda_X_AtividadesService = new CheckResponda_X_AtividadesService(prismaResponda_X_AtividadesRepository);
 
     const resposta = await checkResponda_X_AtividadesService.execute({ id_aluno: data.id_aluno, id_disciplina: data.id_disciplina });
-    console.log(resposta)
 
-    callback("Ok")
+    callback(resposta);
   })
 
 

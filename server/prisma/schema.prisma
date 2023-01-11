@@ -847,6 +847,7 @@ model Conquista {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
+  icon                String?
   name                String
   description         String
   type                Conquista_type

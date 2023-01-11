@@ -51,6 +51,7 @@ export class PrismaConquistasRepository implements ConquistasRepository {
     })
   };
 
+
   async get() {
     const questoes = await prisma.conquista.findMany();
     return questoes;
@@ -76,7 +77,7 @@ export class PrismaConquistasRepository implements ConquistasRepository {
   }
 
   async update({ id, name, description, type, domain, objective, objective_secondary, id_disciplina, difficulty }: ConquistaUpdate) {
-    await prisma.conquista.update({
+    return await prisma.conquista.update({
       where: {
         id
       },

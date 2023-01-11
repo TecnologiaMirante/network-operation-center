@@ -1,5 +1,5 @@
 import { prisma } from "../../../prisma";
-import { AlunoHasConquistasCreateData, AlunoHasConquistasRepository, AlunoHasConquistasFind, AlunoHasConquistasDelete, AlunoHasConquistasUpdate, AlunoHasConquistasRelateAllAlunos } from "../../interfaces/conquistas/aluno-has-conquistas-repository";
+import { AlunoHasConquistasCreateData, AlunoHasConquistasRepository, AlunoHasConquistasFind, AlunoHasConquistasDelete, AlunoHasConquistasUpdate, AlunoHasConquistasRelateAllAlunos, AlunoHasConquistasGetByAluno } from "../../interfaces/conquistas/aluno-has-conquistas-repository";
 
 type alunoHasConquista = {
   id_aluno: string;
@@ -21,6 +21,26 @@ export class PrismaAlunoHasConquistasRepository implements AlunoHasConquistasRep
 
   async get() {
     const questoes = await prisma.aluno_has_conquista.findMany();
+    return questoes;
+  }
+
+  async getConquistasByAluno({ id_aluno }: AlunoHasConquistasGetByAluno) {
+    const questoes = await prisma.aluno_has_conquista.findMany({
+      where: {
+        id_aluno,
+        unlocked: true
+      },
+      select: {
+        progress: true,
+        conquista: true
+      }
+    });
+
+    for (let questao of questoes) {
+      Object(questao).conquista.progress = questao.progress
+      delete Object(questao).progress;
+    }
+
     return questoes;
   }
 

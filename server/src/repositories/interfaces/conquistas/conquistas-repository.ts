@@ -39,6 +39,7 @@ export interface ConquistaFind {
     id: string;
 }
 
+
 export interface ConquistaDelete {
     id: string;
 }
@@ -62,5 +63,5 @@ export interface ConquistasRepository {
     get: () => Promise<Object>;
     find: (data: ConquistaFind) => Promise<Object | null>;
     delete: (data: ConquistaDelete) => Promise<void>;
-    update: (data: ConquistaUpdate) => Promise<void>;
+    update: (data: ConquistaUpdate) => Promise<Object | null>;
 }

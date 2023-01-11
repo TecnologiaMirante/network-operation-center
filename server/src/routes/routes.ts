@@ -202,6 +202,9 @@ import { FindConteudoBySerieDisciplinaController } from "../controllers/conteudo
 import { FindAtividadeWebViewController } from "../controllers/atividades/FindAtividadeWebViewController";
 import { GetOpenRoomsController } from "../controllers/rooms/GetOpenRoomsSocketController";
 import { UpdateLembreteController } from "../controllers/lembretes/UpdateLembreteController";
+import { GetAlunoHasConquistasByAlunoService } from "../services/conquistas/aluno_has_conquistas/GetAlunoHasConquistasGetByAlunoService";
+import { GetAlunoHasConquistasByAlunoController } from "../controllers/conquistas/GetAluno_Has_ConquistasGetByAlunoController";
+import { UpdateConquistasController } from "../controllers/conquistas/UpdateConquistasController";
 
 const router = Router();
 
@@ -763,6 +766,13 @@ router
   .route("/conquistas")
   .post(new CreateConquistasController().handle)
 
+router
+  .route("/conquistas/:id")
+  .put(new UpdateConquistasController().handle)
+
+router
+  .route("/escolas/users/alunos/:id_aluno/conquistas")
+  .get(new GetAlunoHasConquistasByAlunoController().handle)
 // OpenRooms
 router
   .route("/openRooms/:id_professor")
