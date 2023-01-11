@@ -3,13 +3,14 @@ import { PrismaAlunosRepository } from "../../repositories/prisma/alunos/prisma-
 import { PrismaLembretesRepository } from "../../repositories/prisma/lembretes/prisma-lembretes-repository";
 import { PrismaProfessoresRepository } from "../../repositories/prisma/professores/prisma-professores-repository";
 import { PrismaTurmasRepository } from "../../repositories/prisma/turmas/prisma-turmas-repository";
+import { PrismaDisciplinasRepository } from "../../repositories/prisma/disciplinas/prisma-disciplinas-repository";
 import { CreateLembreteService } from "../../services/lembretes/CreateLembreteService";
 
 class CreateLembreteController {
   async handle(req:Request, res:Response) {
 
     // Dados do corpo da requisição
-    const { title, description, data, start, end, id_turma, id_aluno, id_professor } = req.body;
+    const { title, data, start, end, id_turma, id_disciplina, id_aluno, id_professor } = req.body;
 
     const data_formatada = new Date(data)
     const start_formatada = new Date(start)
@@ -20,18 +21,19 @@ class CreateLembreteController {
     const prismaTurmasRepository = new PrismaTurmasRepository();
     const prismaProfessoresRepository = new PrismaProfessoresRepository();
     const prismaAlunosRepository = new PrismaAlunosRepository();
+    const prismaDisciplinasRepository = new PrismaDisciplinasRepository();
 
     // Services ----------------------------------------------------------------------------------------------------------------
-    const createLembreteService = new CreateLembreteService(prismaLembretesRepository, prismaTurmasRepository, prismaProfessoresRepository, prismaAlunosRepository);
+    const createLembreteService = new CreateLembreteService(prismaLembretesRepository, prismaTurmasRepository, prismaDisciplinasRepository, prismaProfessoresRepository, prismaAlunosRepository);
 
     // Executando o service
     const lembrete = await createLembreteService.execute({
       title,
-      description,
       data: data_formatada,
       start: start_formatada,
       end: end_formatada,
       id_turma, 
+      id_disciplina,
       id_aluno, 
       id_professor
     })

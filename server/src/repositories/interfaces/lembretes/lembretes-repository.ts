@@ -1,11 +1,11 @@
 
 export interface LembreteCreateData {
     title: string;
-    description: string;
     data: Date;
     start: Date;
     end: Date;
     id_turma?: string;    
+    id_disciplina?: string;
     id_aluno?: string;
     id_professor?: string;
 }
@@ -25,11 +25,11 @@ export interface LembreteDelete {
 export interface LembreteUpdate {
     id: string;
     title?: string;
-    description?: string;
     data?: Date;
     start?: Date;
     end?: Date;
     id_turma?: string;    
+    id_disciplina?: string;
     id_aluno?: string;
     id_professor?: string;
 }

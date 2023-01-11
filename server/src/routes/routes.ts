@@ -627,7 +627,6 @@ router
   .route("/escolas/users/professores/:id/conteudos")
   .get(new GetConteudoByProfessorController().handle)
 
-
 router
   .route("/conteudosAluno/:id_aluno/:id_disciplina")
   .get(new GetConteudoByAlunoDisciplinaController().handle)

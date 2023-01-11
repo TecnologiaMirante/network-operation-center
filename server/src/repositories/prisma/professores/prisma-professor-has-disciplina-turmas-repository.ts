@@ -56,15 +56,6 @@ export class PrismaProfessorHasDisciplinaTurmasRepository implements ProfessorHa
       select: {
         professor_has_disciplinas: {
           select: {
-            // professor: {
-            //   select: {
-            //     escola_user: {
-            //       select: {
-            //         name: true
-            //       }
-            //     }
-            //   }
-            // },
             disciplina: {
               select: {
                 name: true,
@@ -84,11 +75,15 @@ export class PrismaProfessorHasDisciplinaTurmasRepository implements ProfessorHa
                 id: true
               }
             }
-          }
+          },
         },
       },
       orderBy: {
-
+        turma: {
+          serie: {
+            name: "asc"
+          }
+        }
       }
     });
 

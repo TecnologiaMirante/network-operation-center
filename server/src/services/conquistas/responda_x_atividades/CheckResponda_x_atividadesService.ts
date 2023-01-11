@@ -30,7 +30,5 @@ export class CheckResponda_X_AtividadesService {
         } else {
             return 0;
         }
-
     }
-    
 }
