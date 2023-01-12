@@ -19,11 +19,15 @@ export class FindAtividadeWebViewService {
     // Dados do service
     const { id } = request;
 
-    // Buscando ...
-    const atividade = await this.atividadesRepository.findWebView({
-      id
-    })
-
-    return atividade;
+    try {
+      // Buscando ...
+      const atividade = await this.atividadesRepository.findWebView({
+        id
+      })
+  
+      return atividade;
+    } catch(err) {
+      return new Error("Erro ao criar atividade")
+    }
   }
 }

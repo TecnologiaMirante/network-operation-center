@@ -7,6 +7,7 @@ import { DisciplinasRepository } from "../../repositories/interfaces/disciplinas
 // Interface
 interface CreateLembreteRequest {
   title: string;
+  description: string;
   data: Date;
   start: Date;
   end: Date;
@@ -32,7 +33,7 @@ export class CreateLembreteService {
   async execute(request: CreateLembreteRequest) {
     
     // Dados do service
-    const { title, data, start, end, id_turma, id_disciplina, id_aluno, id_professor } = request;
+    const { title, description, data, start, end, id_turma, id_disciplina, id_aluno, id_professor } = request;
 
     // Se id_turma for inserido, busca se a turma existe e retorna erro caso não
     if (id_turma) {
@@ -64,6 +65,7 @@ export class CreateLembreteService {
     // Criando ...
     const lembrete = await this.lembretesRepository.create({
       title,
+      description,
       data,
       start,
       end,

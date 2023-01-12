@@ -6,6 +6,8 @@ interface UpdateConquistasRequest {
   id: string;
   name: string;
   description: string;
+  color: string;
+  icon: string;
   type: conquistas_type;
   domain: conquistas_domain;
   objective: number;
@@ -29,13 +31,15 @@ export class UpdateConquistasService {
   async execute(request: UpdateConquistasRequest) {
     
     // Dados do service
-    const { id, name, description, type, domain, objective, objective_secondary, id_disciplina, difficulty } = request;
+    const { id, name, description, color, icon, type, domain, objective, objective_secondary, id_disciplina, difficulty } = request;
 
     // Criando ...
     const conquista = await this.conquistasRepository.update({
       id,
       name, 
       description,
+      color,
+      icon,
       type, 
       domain,
       objective, 

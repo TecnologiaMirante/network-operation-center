@@ -138,3 +138,9 @@
   - Cada conquista possui a sua própria tabela
   - Existe uma tabela de relacionamento que armazena o progresso do aluno em cada conquista
     - Ex: Faça X atividades com a nota Y na disciplina de matemática
+
+### Relacionamento do professor com as disciplinas e turmas
+  - Cada professor pode dar aula em qualquer disciplina, desde que esteja relacionado
+  - Um professor pode dar aula de uma disciplina e turmas diferentes? Ex.
+    - Matias dá aula em MTM do 8º Ano - A
+    - Marcos dá aula em MTM do 8º Ano - B

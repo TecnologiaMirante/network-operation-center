@@ -6,6 +6,8 @@ import { DisciplinasRepository } from "../../repositories/interfaces/disciplinas
 interface CreateConquistaEspecificaRequest {
   name: string;
   description: string;
+  color: string;
+  icon: string;
   type: conquistas_type;
   domain: conquistas_domain;
   objective: number;
@@ -30,7 +32,7 @@ export class CreateConquistaEspecificaService {
   async execute(request: CreateConquistaEspecificaRequest) {
     
     // Dados do service
-    const { name, description, type, domain, objective, objective_secondary, id_disciplina, difficulty } = request;
+    const { name, description, color, icon, type, domain, objective, objective_secondary, id_disciplina, difficulty } = request;
 
     if (!(await this.disciplinasRepository.find({ id: id_disciplina }))) {
       return new Error("Disciplina inexistente!");
@@ -40,6 +42,8 @@ export class CreateConquistaEspecificaService {
     return await this.conquistasRepository.createSpecific({
       name, 
       description,
+      color,
+      icon,
       type, 
       domain,
       objective, 

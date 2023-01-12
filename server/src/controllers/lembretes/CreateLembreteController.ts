@@ -10,26 +10,27 @@ class CreateLembreteController {
   async handle(req:Request, res:Response) {
 
     // Dados do corpo da requisição
-    const { title, data, start, end, id_turma, id_disciplina, id_aluno, id_professor } = req.body;
+    const { title, description, data, start, end, id_turma, id_disciplina, id_aluno, id_professor } = req.body;
 
-    console.log("Antes da formatação da data: ")
-    console.log("title: ", title)
-    console.log("data: ", data)
-    console.log("start: ", start)
-    console.log("end: ", end)
-    console.log("id_turma: ", id_turma)
-    console.log("id_disciplina: ", id_disciplina)
-    console.log("id_aluno: ", id_aluno)
-    console.log("id_professor: ", id_professor)
+    // console.log("Antes da formatação da data: ")
+    // console.log("title: ", title)
+    // console.log("description: ", description)
+    // console.log("data: ", data)
+    // console.log("start: ", start)
+    // console.log("end: ", end)
+    // console.log("id_turma: ", id_turma)
+    // console.log("id_disciplina: ", id_disciplina)
+    // console.log("id_aluno: ", id_aluno)
+    // console.log("id_professor: ", id_professor)
 
     const data_formatada = new Date(data)
     const start_formatada = new Date(start)
     const end_formatada = new Date(end)
 
-    console.log("Depois: ")
-    console.log(data_formatada)
-    console.log(start_formatada)
-    console.log(end_formatada)
+    // console.log("Depois: ")
+    // console.log(data_formatada)
+    // console.log(start_formatada)
+    // console.log(end_formatada)
 
     // Repositório do modelo do prisma
     const prismaLembretesRepository = new PrismaLembretesRepository();
@@ -44,6 +45,7 @@ class CreateLembreteController {
     // Executando o service
     const lembrete = await createLembreteService.execute({
       title,
+      description,
       data: data_formatada,
       start: start_formatada,
       end: end_formatada,

@@ -13,7 +13,7 @@ class UpdateLembreteController {
     const { id } = req.params;
 
     // Dados do corpo da requisição
-    const { title, data, start, end, id_turma, id_disciplina, id_aluno, id_professor } = req.body;
+    const { title, description, data, start, end, id_turma, id_disciplina, id_aluno, id_professor } = req.body;
 
     const data_formatada = new Date(data)
     const start_formatada = new Date(start)
@@ -33,6 +33,7 @@ class UpdateLembreteController {
     const lembrete = await updateLembreteService.execute({
       id,
       title,
+      description,
       data: data_formatada,
       start: start_formatada,
       end: end_formatada,

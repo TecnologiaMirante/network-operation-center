@@ -1,6 +1,7 @@
 
 export interface LembreteCreateData {
     title: string;
+    description: string;
     data: Date;
     start: Date;
     end: Date;
@@ -25,6 +26,7 @@ export interface LembreteDelete {
 export interface LembreteUpdate {
     id: string;
     title?: string;
+    description?: string;
     data?: Date;
     start?: Date;
     end?: Date;

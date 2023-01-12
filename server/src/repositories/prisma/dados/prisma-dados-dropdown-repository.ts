@@ -217,16 +217,28 @@ export class PrismaDadosDropdownRepository implements DadosDropdownRepository {
 
     // Organizando ...
     // Disciplina - Serie - Turma - Aluno
-    const dados = dados_inicial[0].ProfessorHasDisciplina
+    const dados_raw = dados_inicial[0].ProfessorHasDisciplina
     
+    // Jogando em um array somente aqueles em que o array não está vazio
+    const dados = [];
+
+    for (let dado of dados_raw) {
+        if (dado.ProfessorHasDisciplinaTurma.length > 0) {
+            dados.push(dado);
+        }
+    }
+
     for (let dado of Object(dados)) {        
         
         // array_auxiliar
         const array_series = [];        
-
+        
         // Trocando o campo "ProfessorHasDisciplinaTurma" por "disciplinas"
         dado.disciplinas = dado.ProfessorHasDisciplinaTurma[0].professor_has_disciplinas.disciplina
         delete dado.ProfessorHasDisciplinaTurma
+        
+        // console.log("dados")
+        // console.log(dado.disciplinas.SerieHasDisciplina)
 
         for (let aux of dado.disciplinas.SerieHasDisciplina) {
             
@@ -274,10 +286,10 @@ export class PrismaDadosDropdownRepository implements DadosDropdownRepository {
         // Trocando o campo "SerieHasDisciplina" por "series"
         dado.disciplinas.series = array_series
         delete dado.disciplinas.SerieHasDisciplina
-
-        dado.Series = dado.SerieHasDisciplina
-        delete dado.SerieHasDisciplina
     }
+
+    // console.log("depois -------")
+    // console.log(dados)
 
     // Funcionamento do código:
     // Buscar dentro de cada disciplina

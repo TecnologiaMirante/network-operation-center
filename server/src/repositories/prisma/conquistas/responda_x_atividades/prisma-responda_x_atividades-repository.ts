@@ -113,7 +113,7 @@ export class PrismaResponda_X_AtividadesRepository implements Responda_X_Ativida
 
       if (Object(aluno_conquista).progress != 100) {
         const current = Object(aluno_conquista).current + 1;
-        const progress = (current/conquista.objective) * 100;
+        const progress = Math.round((current/conquista.objective) * 100);
   
         await prisma.aluno_has_conquista.update({
           where: {

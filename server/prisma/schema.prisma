@@ -733,10 +733,11 @@ model Lembrete {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  title String
-  data  DateTime
-  start DateTime
-  end   DateTime
+  title       String
+  description String
+  data        DateTime
+  start       DateTime
+  end         DateTime
 
   id_turma String?
   turma    Turma?  @relation(fields: [id_turma], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -850,6 +851,7 @@ model Conquista {
   icon                String?
   name                String
   description         String
+  color               String
   type                Conquista_type
   domain              Conquista_domain
   objective           Int

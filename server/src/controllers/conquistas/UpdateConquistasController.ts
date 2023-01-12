@@ -15,7 +15,7 @@ class UpdateConquistasController {
     const { id } = req.params;
 
     // Dados do corpo da requisição
-    const { name, description, type, domain, objective, objective_secondary, id_disciplina, difficulty  } = req.body;
+    const { name, description, color, icon, type, domain, objective, objective_secondary, id_disciplina, difficulty  } = req.body;
 
     // Repositório do modelo secretaria do Prisma
     const prismaConquistasRepository = new PrismaConquistasRepository();
@@ -30,6 +30,8 @@ class UpdateConquistasController {
       id,
       name, 
       description,
+      color,
+      icon, 
       type, 
       domain,
       objective, 

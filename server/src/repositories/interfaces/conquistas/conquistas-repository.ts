@@ -5,6 +5,8 @@ export type conquistas_domain = "specific" | "general"
 export interface ConquistaCreateData {
     name: string;
     description: string;
+    color: string;
+    icon: string;
     type: conquistas_type;
     domain: conquistas_domain;
     objective: number;
@@ -16,6 +18,8 @@ export interface ConquistaCreateData {
 export interface ConquistaCreateSpecific {
     name: string;
     description: string;
+    color: string;
+    icon: string;
     type: conquistas_type;
     domain: conquistas_domain;
     objective: number;
@@ -27,6 +31,8 @@ export interface ConquistaCreateSpecific {
 export interface ConquistaCreateGeneral {
     name: string;
     description: string;
+    color: string;
+    icon: string;
     type: conquistas_type;
     domain: conquistas_domain;
     objective: number;
@@ -48,6 +54,8 @@ export interface ConquistaUpdate {
     id: string;
     name?: string;
     description?: string;
+    color?: string;
+    icon?: string;
     type?: conquistas_type;
     domain?: conquistas_domain;
     objective?: number;

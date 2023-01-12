@@ -5,6 +5,8 @@ import { ConquistasRepository } from "../../repositories/interfaces/conquistas/c
 interface CreateConquistaGeralRequest {
   name: string;
   description: string;
+  color: string;
+  icon: string;
   type: conquistas_type;
   domain: conquistas_domain;
   objective: number;
@@ -28,12 +30,14 @@ export class CreateConquistaGeralService {
   async execute(request: CreateConquistaGeralRequest) {
     
     // Dados do service
-    const { name, description, type, domain, objective, objective_secondary, id_disciplina, difficulty } = request;
+    const { name, description, color, icon, type, domain, objective, objective_secondary, id_disciplina, difficulty } = request;
 
     // Criando ...
     return await this.conquistasRepository.createGeneral({
       name, 
       description,
+      color, 
+      icon,
       type, 
       domain,
       objective, 
