@@ -206,6 +206,7 @@ import { GetAlunoHasConquistasByAlunoService } from "../services/conquistas/alun
 import { GetAlunoHasConquistasByAlunoController } from "../controllers/conquistas/GetAluno_Has_ConquistasGetByAlunoController";
 import { UpdateConquistasController } from "../controllers/conquistas/UpdateConquistasController";
 import { GetConquistasController } from "../controllers/conquistas/GetConquistasController";
+import { FindLembreteController } from "../controllers/lembretes/FindLembreteController";
 
 const router = Router();
 
@@ -692,6 +693,7 @@ router
 // Lembretes
 router
   .route("/lembretes/:id")
+  .get(new FindLembreteController().handle)
   .put(new UpdateLembreteController().handle)
   .delete(new DeleteLembreteController().handle)
 
