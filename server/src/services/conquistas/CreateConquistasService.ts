@@ -31,15 +31,6 @@ export class CreateConquistasService {
     const { name, description, type, domain, objective, objective_secondary, id_disciplina, difficulty } = request;
 
     // Criando ...
-    return await this.conquistasRepository.create({
-      name, 
-      description,
-      type, 
-      domain,
-      objective, 
-      objective_secondary, 
-      id_disciplina, 
-      difficulty
-    })
+    return await this.conquistasRepository.get();
   }
 }

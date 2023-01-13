@@ -205,6 +205,7 @@ import { UpdateLembreteController } from "../controllers/lembretes/UpdateLembret
 import { GetAlunoHasConquistasByAlunoService } from "../services/conquistas/aluno_has_conquistas/GetAlunoHasConquistasGetByAlunoService";
 import { GetAlunoHasConquistasByAlunoController } from "../controllers/conquistas/GetAluno_Has_ConquistasGetByAlunoController";
 import { UpdateConquistasController } from "../controllers/conquistas/UpdateConquistasController";
+import { GetConquistasController } from "../controllers/conquistas/GetConquistasController";
 
 const router = Router();
 
@@ -764,6 +765,7 @@ router
 // Conquistas
 router
   .route("/conquistas")
+  .get(new GetConquistasController().handle)
   .post(new CreateConquistasController().handle)
 
 router
