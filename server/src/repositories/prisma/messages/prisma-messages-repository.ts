@@ -20,13 +20,13 @@ export class PrismaMessagesRepository implements MessagesRepository {
     
     async getMessagesByRoom({ type, id_room }: GetMessagesByRoom ) {
 
-      if (type == "web") {
+      if (type == "mobile") {
         const rooms = await prisma.message.findMany({
           where: {
             id_room
           },
           orderBy: {
-            created_at: "desc"
+            created_at: "asc"
           }
         });
         return rooms;
@@ -37,7 +37,7 @@ export class PrismaMessagesRepository implements MessagesRepository {
             id_room
           },
           orderBy: {
-            created_at: "asc"
+            created_at: "desc"
           }
         });
         return rooms;
