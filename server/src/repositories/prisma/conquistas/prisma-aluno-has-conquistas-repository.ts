@@ -28,7 +28,7 @@ export class PrismaAlunoHasConquistasRepository implements AlunoHasConquistasRep
     const questoes = await prisma.aluno_has_conquista.findMany({
       where: {
         id_aluno,
-        unlocked: true
+        // unlocked: true
       },
       select: {
         progress: true,
@@ -39,6 +39,12 @@ export class PrismaAlunoHasConquistasRepository implements AlunoHasConquistasRep
     for (let questao of questoes) {
       Object(questao).conquista.progress = questao.progress
       delete Object(questao).progress;
+    }
+
+    for (let questao of questoes) {
+      if(Object(questao).conquista.progress == 0) {
+        questao.conquista.icon = "https://storage.googleapis.com/mrt-mais-educacao-dev-midias/ConquistaAtividadeOFF.png";
+      }
     }
 
     return questoes;
