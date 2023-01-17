@@ -271,7 +271,7 @@ CREATE TABLE `alunos` (
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
     `points` DOUBLE NOT NULL DEFAULT 0,
-    `id_escola_user` VARCHAR(191) NULL,
+    `id_escola_user` VARCHAR(191) NOT NULL,
     `id_turma` VARCHAR(191) NULL,
 
     PRIMARY KEY (`id`)
@@ -284,7 +284,6 @@ CREATE TABLE `favoritos` (
     `updated_at` DATETIME(3) NOT NULL,
     `id_aluno` VARCHAR(191) NOT NULL,
     `id_aula` VARCHAR(191) NOT NULL,
-    `index` INTEGER NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -295,8 +294,10 @@ CREATE TABLE `atividades` (
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
     `title` VARCHAR(191) NOT NULL,
-    `description` VARCHAR(191) NOT NULL,
     `grade` DOUBLE NOT NULL DEFAULT 10,
+    `thumb` VARCHAR(191) NULL,
+    `id_disciplina` VARCHAR(191) NOT NULL,
+    `id_serie` VARCHAR(191) NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -345,6 +346,7 @@ CREATE TABLE `aluno_responde_atividades` (
     `updated_at` DATETIME(3) NOT NULL,
     `nota` DOUBLE NOT NULL,
     `attempt` INTEGER NOT NULL DEFAULT 1,
+    `time` INTEGER NOT NULL DEFAULT 0,
     `id_atividade` VARCHAR(191) NOT NULL,
     `id_bimestre` VARCHAR(191) NULL,
     `id_aluno` VARCHAR(191) NOT NULL,
@@ -360,8 +362,22 @@ CREATE TABLE `conteudos` (
     `name` VARCHAR(191) NOT NULL,
     `status` BOOLEAN NULL DEFAULT true,
     `id_disciplina` VARCHAR(191) NOT NULL,
+    `id_serie` VARCHAR(191) NOT NULL,
     `id_bimestre` VARCHAR(191) NULL,
     `created_by` VARCHAR(191) NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `conteudo_has_itens` (
+    `id` VARCHAR(191) NOT NULL,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updated_at` DATETIME(3) NOT NULL,
+    `type` VARCHAR(191) NOT NULL,
+    `id_conteudo` VARCHAR(191) NOT NULL,
+    `id_aula` VARCHAR(191) NULL,
+    `id_atividade` VARCHAR(191) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -461,6 +477,7 @@ CREATE TABLE `lembretes` (
     `end` DATETIME(3) NOT NULL,
     `id_turma` VARCHAR(191) NULL,
     `id_aluno` VARCHAR(191) NULL,
+    `id_disciplina` VARCHAR(191) NULL,
     `id_professor` VARCHAR(191) NULL,
 
     PRIMARY KEY (`id`)
@@ -511,6 +528,90 @@ CREATE TABLE `rank_imgs` (
     `second` VARCHAR(191) NOT NULL DEFAULT '',
     `third` VARCHAR(191) NOT NULL DEFAULT '',
     `id_rank` VARCHAR(191) NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `progressos` (
+    `id` VARCHAR(191) NOT NULL,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updated_at` DATETIME(3) NOT NULL,
+    `id_aluno` VARCHAR(191) NOT NULL,
+    `id_aula` VARCHAR(191) NOT NULL,
+    `id_bimestre` VARCHAR(191) NOT NULL,
+    `progress` INTEGER NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `conquistas` (
+    `id` VARCHAR(191) NOT NULL,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updated_at` DATETIME(3) NOT NULL,
+    `icon` VARCHAR(191) NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `description` VARCHAR(191) NOT NULL,
+    `color` VARCHAR(191) NOT NULL,
+    `type` ENUM('ALCANCE_MEDIA_X', 'RESPONDA_X_ATIVIDADE', 'NOTA_X_EM_Y_ATIVIDADES', 'ASSISTA_X_MINUTOS_DE_AULA', 'MAIOR_PONTUACAO_NA_X_AO_FIM_DO_BIMESTRE', 'X_DIAS_SEGUIDOS_NO_APLICATIVO') NOT NULL,
+    `domain` ENUM('specific', 'general') NOT NULL,
+    `objective` INTEGER NOT NULL,
+    `objective_secondary` INTEGER NULL,
+    `id_disciplina` VARCHAR(191) NULL,
+    `difficulty` ENUM('easy', 'normal', 'hard', 'very_hard') NOT NULL DEFAULT 'normal',
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Aluno_has_conquista` (
+    `id` VARCHAR(191) NOT NULL,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updated_at` DATETIME(3) NOT NULL,
+    `current` INTEGER NULL DEFAULT 0,
+    `progress` INTEGER NULL DEFAULT 0,
+    `unlocked` BOOLEAN NOT NULL DEFAULT false,
+    `id_aluno` VARCHAR(191) NOT NULL,
+    `id_conquista` VARCHAR(191) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Room` (
+    `id` VARCHAR(191) NOT NULL,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updated_at` DATETIME(3) NOT NULL,
+    `id_name` VARCHAR(191) NOT NULL,
+    `id_aluno` VARCHAR(191) NOT NULL,
+    `id_professor` VARCHAR(191) NOT NULL,
+
+    UNIQUE INDEX `Room_id_name_key`(`id_name`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `user_rooms` (
+    `id` VARCHAR(191) NOT NULL,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updated_at` DATETIME(3) NOT NULL,
+    `id_socket` VARCHAR(191) NOT NULL,
+    `id_connected` VARCHAR(191) NOT NULL,
+    `id_room` VARCHAR(191) NOT NULL,
+
+    UNIQUE INDEX `user_rooms_id_socket_key`(`id_socket`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `messages` (
+    `id` VARCHAR(191) NOT NULL,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updated_at` DATETIME(3) NOT NULL,
+    `id_room` VARCHAR(191) NOT NULL,
+    `id_user` VARCHAR(191) NOT NULL,
+    `text` VARCHAR(191) NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -588,7 +689,7 @@ ALTER TABLE `serie_has_disciplinas` ADD CONSTRAINT `serie_has_disciplinas_id_dis
 ALTER TABLE `serie_has_disciplinas` ADD CONSTRAINT `serie_has_disciplinas_id_serie_fkey` FOREIGN KEY (`id_serie`) REFERENCES `series`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `alunos` ADD CONSTRAINT `alunos_id_escola_user_fkey` FOREIGN KEY (`id_escola_user`) REFERENCES `escola_users`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `alunos` ADD CONSTRAINT `alunos_id_escola_user_fkey` FOREIGN KEY (`id_escola_user`) REFERENCES `escola_users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `alunos` ADD CONSTRAINT `alunos_id_turma_fkey` FOREIGN KEY (`id_turma`) REFERENCES `turmas`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
@@ -598,6 +699,12 @@ ALTER TABLE `favoritos` ADD CONSTRAINT `favoritos_id_aluno_fkey` FOREIGN KEY (`i
 
 -- AddForeignKey
 ALTER TABLE `favoritos` ADD CONSTRAINT `favoritos_id_aula_fkey` FOREIGN KEY (`id_aula`) REFERENCES `aulas`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `atividades` ADD CONSTRAINT `atividades_id_disciplina_fkey` FOREIGN KEY (`id_disciplina`) REFERENCES `disciplinas`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `atividades` ADD CONSTRAINT `atividades_id_serie_fkey` FOREIGN KEY (`id_serie`) REFERENCES `series`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `questoes` ADD CONSTRAINT `questoes_id_disciplina_fkey` FOREIGN KEY (`id_disciplina`) REFERENCES `disciplinas`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
@@ -627,7 +734,19 @@ ALTER TABLE `conteudos` ADD CONSTRAINT `conteudos_created_by_fkey` FOREIGN KEY (
 ALTER TABLE `conteudos` ADD CONSTRAINT `conteudos_id_disciplina_fkey` FOREIGN KEY (`id_disciplina`) REFERENCES `disciplinas`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE `conteudos` ADD CONSTRAINT `conteudos_id_serie_fkey` FOREIGN KEY (`id_serie`) REFERENCES `series`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE `conteudos` ADD CONSTRAINT `conteudos_id_bimestre_fkey` FOREIGN KEY (`id_bimestre`) REFERENCES `bimestres`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `conteudo_has_itens` ADD CONSTRAINT `conteudo_has_itens_id_atividade_fkey` FOREIGN KEY (`id_atividade`) REFERENCES `atividades`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `conteudo_has_itens` ADD CONSTRAINT `conteudo_has_itens_id_conteudo_fkey` FOREIGN KEY (`id_conteudo`) REFERENCES `conteudos`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `conteudo_has_itens` ADD CONSTRAINT `conteudo_has_itens_id_aula_fkey` FOREIGN KEY (`id_aula`) REFERENCES `aulas`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `conteudo_has_aulas` ADD CONSTRAINT `conteudo_has_aulas_id_conteudo_fkey` FOREIGN KEY (`id_conteudo`) REFERENCES `conteudos`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
@@ -669,6 +788,9 @@ ALTER TABLE `anotacao_has_tags` ADD CONSTRAINT `anotacao_has_tags_id_anotacao_fk
 ALTER TABLE `lembretes` ADD CONSTRAINT `lembretes_id_professor_fkey` FOREIGN KEY (`id_professor`) REFERENCES `professores`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE `lembretes` ADD CONSTRAINT `lembretes_id_disciplina_fkey` FOREIGN KEY (`id_disciplina`) REFERENCES `disciplinas`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE `lembretes` ADD CONSTRAINT `lembretes_id_turma_fkey` FOREIGN KEY (`id_turma`) REFERENCES `turmas`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -688,3 +810,36 @@ ALTER TABLE `ranks` ADD CONSTRAINT `ranks_id_aluno_fkey` FOREIGN KEY (`id_aluno`
 
 -- AddForeignKey
 ALTER TABLE `rank_imgs` ADD CONSTRAINT `rank_imgs_id_rank_fkey` FOREIGN KEY (`id_rank`) REFERENCES `ranks`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `progressos` ADD CONSTRAINT `progressos_id_aluno_fkey` FOREIGN KEY (`id_aluno`) REFERENCES `alunos`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `progressos` ADD CONSTRAINT `progressos_id_aula_fkey` FOREIGN KEY (`id_aula`) REFERENCES `aulas`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `progressos` ADD CONSTRAINT `progressos_id_bimestre_fkey` FOREIGN KEY (`id_bimestre`) REFERENCES `bimestres`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `conquistas` ADD CONSTRAINT `conquistas_id_disciplina_fkey` FOREIGN KEY (`id_disciplina`) REFERENCES `disciplinas`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Aluno_has_conquista` ADD CONSTRAINT `Aluno_has_conquista_id_aluno_fkey` FOREIGN KEY (`id_aluno`) REFERENCES `alunos`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Aluno_has_conquista` ADD CONSTRAINT `Aluno_has_conquista_id_conquista_fkey` FOREIGN KEY (`id_conquista`) REFERENCES `conquistas`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Room` ADD CONSTRAINT `Room_id_professor_fkey` FOREIGN KEY (`id_professor`) REFERENCES `professores`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Room` ADD CONSTRAINT `Room_id_aluno_fkey` FOREIGN KEY (`id_aluno`) REFERENCES `alunos`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `user_rooms` ADD CONSTRAINT `user_rooms_id_room_fkey` FOREIGN KEY (`id_room`) REFERENCES `Room`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `messages` ADD CONSTRAINT `messages_id_user_fkey` FOREIGN KEY (`id_user`) REFERENCES `escola_users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `messages` ADD CONSTRAINT `messages_id_room_fkey` FOREIGN KEY (`id_room`) REFERENCES `Room`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

@@ -20,6 +20,9 @@ export class PrismaBimestresRepository implements BimestresRepository {
         number: true,
         start: true,
         end: true
+      },
+      orderBy: {
+        number: "asc"
       }
     });
     return bimestres;
