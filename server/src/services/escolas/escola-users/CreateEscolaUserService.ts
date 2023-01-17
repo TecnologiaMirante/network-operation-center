@@ -70,6 +70,7 @@ export class CreateEscolaUserService {
       const randomPassword = Math.random().toString(36).slice(-8);
 
       // Criptografando a senha
+      // const passwordHash = await hash(randomPassword, 8);
       const passwordHash = await hash(randomPassword, 8);
 
       // Enviando o email

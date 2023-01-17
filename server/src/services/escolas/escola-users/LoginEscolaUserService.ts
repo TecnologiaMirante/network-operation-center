@@ -34,11 +34,14 @@ export class LoginEscolaUserService {
     }
 
     // Se a senha inserida é igual a cadastrada
-    if (!await compare(password, Object(escolaUser).password)) {
+    if (!(password == Object(escolaUser).password)) {
       return new Error("Matrícula/Senha inválida!")
     }
 
-
+    // // Se a senha inserida é igual a cadastrada
+    // if (!await compare(password, Object(escolaUser).password)) {
+    //   return new Error("Matrícula/Senha inválida!")
+    // }
 
     try {
       

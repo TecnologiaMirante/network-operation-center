@@ -15,7 +15,17 @@ export class PrismaProfessoresRepository implements ProfessoresRepository {
   };
 
   async get() {
-    const professores = await prisma.professor.findMany();
+    const professores = await prisma.professor.findMany({
+      include: {
+        escola_user: {
+          select: {
+            id: true,
+            name: true,
+            mat: true,
+          }
+        }
+      }
+    });
     return professores;
   }
 
