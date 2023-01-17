@@ -13,7 +13,24 @@ export class PrismaProfessorHasDisciplinasRepository implements ProfessorHasDisc
   };
 
   async get() {
-    const professores = await prisma.professorHasDisciplina.findMany();
+    const professores = await prisma.professorHasDisciplina.findMany({
+      include: {
+        professor: {
+          select: {
+            escola_user: {
+              select: {
+                name: true
+              }
+            }
+          }
+        },
+        disciplina: {
+          select: {
+            name: true
+          }
+        }
+      }
+    });
     return professores;
   }
 
