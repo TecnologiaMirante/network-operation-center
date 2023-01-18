@@ -901,6 +901,8 @@ model Aluno_has_conquista {
 
   id_conquista String
   conquista    Conquista @relation(fields: [id_conquista], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("aluno_has_conquistas")
 }
 
 model Room {
@@ -918,6 +920,8 @@ model Room {
   professor    Professor  @relation(fields: [id_professor], references: [id], onDelete: Cascade, onUpdate: Cascade)
   Message      Message[]
   UserRoom     UserRoom[]
+
+  @@map("rooms")
 }
 
 model UserRoom {

@@ -27,7 +27,7 @@ class CreateLembreteController {
     const start_formatada = new Date(start)
     const end_formatada = new Date(end)
 
-    console.log("Depois: ")
+    console.log("\n\nDepois: ")
     console.log(data_formatada)
     console.log(start_formatada)
     console.log(end_formatada)
