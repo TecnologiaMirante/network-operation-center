@@ -34,6 +34,7 @@ class FindLembreteController {
       id,
     })
 
+
     // Caso aconteça algum erro, interrompe o processo retorna a mensagem de erro
     if(lembrete instanceof Error) {
       return res.status(400).send(lembrete.message);

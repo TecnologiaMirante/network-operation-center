@@ -21,13 +21,14 @@ export class PrismaLembretesRepository implements LembretesRepository {
 
   async get() {
     const lembretes = await prisma.lembrete.findMany();
+   
 
     for (let lembrete of lembretes) {
       Object(lembrete).data = lembrete.data.toLocaleDateString();
       Object(lembrete).start = lembrete.start.toLocaleTimeString();
       Object(lembrete).end = lembrete.end.toLocaleTimeString();
     }
-
+    console.log("tentando achar error 1",lembretes)
     return lembretes;
   }
 
@@ -53,7 +54,9 @@ export class PrismaLembretesRepository implements LembretesRepository {
       Object(lembrete).data = lembrete.data.toLocaleString();
       Object(lembrete).start = lembrete.start.toLocaleString();
       Object(lembrete).end = lembrete.end.toLocaleString();
+
     }
+    console.log("tentando achar error 2",lembretes)
 
     return lembretes;
   }
@@ -73,6 +76,7 @@ export class PrismaLembretesRepository implements LembretesRepository {
     );
 
     Object(lembrete).data = Object(lembrete).data.toLocaleDateString();
+    console.log("tentando achar error 3",lembrete)
     Object(lembrete).start = Object(lembrete).start.toLocaleTimeString();
     Object(lembrete).end = Object(lembrete).end.toLocaleTimeString();
 

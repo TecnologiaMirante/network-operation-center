@@ -861,7 +861,7 @@ model Conquista {
   disciplina    Disciplina? @relation(fields: [id_disciplina], references: [id], onDelete: SetNull, onUpdate: Cascade)
 
   difficulty          questao_difficulty    @default(normal)
-  Aluno_has_conquista Aluno_has_conquista[]
+  aluno_has_conquista Aluno_has_conquista[]
 
   @@map("conquistas")
 }
