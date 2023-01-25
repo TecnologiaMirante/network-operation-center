@@ -3,12 +3,13 @@ import { LembreteCreateData, LembretesRepository, LembreteFind, LembreteDelete, 
 
 export class PrismaLembretesRepository implements LembretesRepository {
 
-  async create( { title, description, data, start, end, id_turma, id_disciplina, id_aluno, id_professor }: LembreteCreateData ) {
+  async create( { title, description, data, data_masked, start, end, id_turma, id_disciplina, id_aluno, id_professor }: LembreteCreateData ) {
     return await prisma.lembrete.create({
       data: {
         title,
         description,
         data,
+        data_masked,
         start,
         end,
         id_turma, 
@@ -42,6 +43,7 @@ export class PrismaLembretesRepository implements LembretesRepository {
         title: true,
         description: true,
         data: true,
+        data_masked: true,
         start: true,
         end: true,
       },
@@ -103,7 +105,7 @@ export class PrismaLembretesRepository implements LembretesRepository {
     });
   }
 
-  async update({ id, title, description, data, start, end, id_turma, id_disciplina, id_aluno, id_professor }: LembreteUpdate) {
+  async update({ id, title, description, data, data_masked, start, end, id_turma, id_disciplina, id_aluno, id_professor }: LembreteUpdate) {
     await prisma.lembrete.update({
       where: {
         id
@@ -112,6 +114,7 @@ export class PrismaLembretesRepository implements LembretesRepository {
         title,
         description,
         data,
+        data_masked,
         start,
         end,
         id_turma, 

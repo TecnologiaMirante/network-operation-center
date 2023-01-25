@@ -3,6 +3,7 @@ export interface LembreteCreateData {
     title: string;
     description: string;
     data: Date;
+    data_masked: string;
     start: Date;
     end: Date;
     id_turma?: string;    
@@ -28,6 +29,7 @@ export interface LembreteUpdate {
     title?: string;
     description?: string;
     data?: Date;
+    data_masked?: string;
     start?: Date;
     end?: Date;
     id_turma?: string;    

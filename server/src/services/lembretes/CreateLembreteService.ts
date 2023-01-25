@@ -9,6 +9,7 @@ interface CreateLembreteRequest {
   title: string;
   description: string;
   data: Date;
+  data_masked: string;
   start: Date;
   end: Date;
   id_turma?: string;    
@@ -33,7 +34,7 @@ export class CreateLembreteService {
   async execute(request: CreateLembreteRequest) {
     
     // Dados do service
-    const { title, description, data, start, end, id_turma, id_disciplina, id_aluno, id_professor } = request;
+    const { title, description, data, data_masked, start, end, id_turma, id_disciplina, id_aluno, id_professor } = request;
 
     // Se id_turma for inserido, busca se a turma existe e retorna erro caso não
     if (id_turma) {
@@ -67,6 +68,7 @@ export class CreateLembreteService {
       title,
       description,
       data,
+      data_masked,
       start,
       end,
       id_turma, 
