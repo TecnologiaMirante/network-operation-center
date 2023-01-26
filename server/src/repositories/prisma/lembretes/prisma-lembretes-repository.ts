@@ -20,7 +20,15 @@ export class PrismaLembretesRepository implements LembretesRepository {
   };
 
   async get() {
-    const lembretes = await prisma.lembrete.findMany();
+    const lembretes = await prisma.lembrete.findMany({
+      include: {
+        turma: {
+          select: {
+             name: true
+          }
+        }
+      }
+    });
    
 
     for (let lembrete of lembretes) {
@@ -63,9 +71,6 @@ export class PrismaLembretesRepository implements LembretesRepository {
 
   async find({ id }: LembreteFind) {
 
-    console.log(id)
-    console.log("\n")
-
     const lembrete = await prisma.lembrete.findUnique(
       {
         where: {
@@ -79,17 +84,9 @@ export class PrismaLembretesRepository implements LembretesRepository {
       }
     );
 
-    console.log("\n")
-    console.log("o erro ta aqui")
-    console.log(lembrete)
-    console.log("\n")
-    console.log("\n")
-
     Object(lembrete).data = Object(lembrete).data.toLocaleDateString();
     Object(lembrete).start = Object(lembrete).start.toLocaleTimeString();
     Object(lembrete).end = Object(lembrete).end.toLocaleTimeString();
-
-    console.log("depois do erro")
 
     return lembrete;
   }

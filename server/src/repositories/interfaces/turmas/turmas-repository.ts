@@ -27,9 +27,14 @@ export interface TurmaUpdate {
     id_serie?: string;
 }
 
+export interface TurmaGetSerieByTurma {
+    id: string;
+}
+
 export interface TurmasRepository {
     create: (data: TurmaCreateData) => Promise<Object>;
     get: () => Promise<Object>;
+    getSerieByTurma: (data: TurmaGetSerieByTurma) => Promise<Object | null>;
     find: (data: TurmaFind) => Promise<Object | null>;
     delete: (data: TurmaDelete) => Promise<void>;
     update: (data: TurmaUpdate) => Promise<void>;

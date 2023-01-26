@@ -1,5 +1,5 @@
 import { prisma } from "../../../prisma";
-import { TurmaCreateData, TurmasRepository, TurmaFind, TurmaDelete, TurmaUpdate, shift_turma, status_turma } from "../../interfaces/turmas/turmas-repository";
+import { TurmaCreateData, TurmasRepository, TurmaFind, TurmaDelete, TurmaUpdate, shift_turma, status_turma, TurmaGetSerieByTurma } from "../../interfaces/turmas/turmas-repository";
 
 export class PrismaTurmasRepository implements TurmasRepository {
 
@@ -22,7 +22,25 @@ export class PrismaTurmasRepository implements TurmasRepository {
         name: "asc"
       }
     });
+
     return turmas;
+  }
+
+  async getSerieByTurma( { id }: TurmaGetSerieByTurma) {
+    const serie = await prisma.turma.findFirst({
+      where: {
+        id,
+      },
+      select: {
+        serie: {
+          select: {
+            id: true
+          }
+        }
+      }
+    });
+
+    return serie;
   }
 
   async find({ id }: TurmaFind) {

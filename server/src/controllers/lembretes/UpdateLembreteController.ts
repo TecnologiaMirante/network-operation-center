@@ -4,6 +4,7 @@ import { PrismaLembretesRepository } from "../../repositories/prisma/lembretes/p
 import { PrismaProfessoresRepository } from "../../repositories/prisma/professores/prisma-professores-repository";
 import { PrismaTurmasRepository } from "../../repositories/prisma/turmas/prisma-turmas-repository";
 import { PrismaDisciplinasRepository } from "../../repositories/prisma/disciplinas/prisma-disciplinas-repository";
+import { PrismaSerieHasDisciplinasRepository } from "../../repositories/prisma/series/prisma-serie-has-disciplinas-repository";
 import { CreateLembreteService } from "../../services/lembretes/CreateLembreteService";
 import { UpdateLembreteService } from "../../services/lembretes/UpdateLembreteService";
 
@@ -15,9 +16,25 @@ class UpdateLembreteController {
     // Dados do corpo da requisição
     const { title, description, data, start, end, id_turma, id_disciplina, id_aluno, id_professor } = req.body;
 
+    console.log("Antes da formatação da data: ")
+    console.log("title: ", title)
+    console.log("description: ", description)
+    console.log("data: ", data)
+    console.log("start: ", start)
+    console.log("end: ", end)
+    console.log("id_turma: ", id_turma)
+    console.log("id_disciplina: ", id_disciplina)
+    console.log("id_aluno: ", id_aluno)
+    console.log("id_professor: ", id_professor)
+
     const data_formatada = new Date(data)
     const start_formatada = new Date(start)
     const end_formatada = new Date(end)
+
+    console.log("\n\nDepois: ")
+    console.log(data_formatada)
+    console.log(start_formatada)
+    console.log(end_formatada)
 
     // Repositório do modelo do prisma
     const prismaLembretesRepository = new PrismaLembretesRepository();
@@ -25,9 +42,10 @@ class UpdateLembreteController {
     const prismaProfessoresRepository = new PrismaProfessoresRepository();
     const prismaAlunosRepository = new PrismaAlunosRepository();
     const prismaDisciplinasRepository = new PrismaDisciplinasRepository();
+    const prismaSerieHasDisciplinasRepository = new PrismaSerieHasDisciplinasRepository();
 
     // Services ----------------------------------------------------------------------------------------------------------------
-    const updateLembreteService = new UpdateLembreteService(prismaLembretesRepository, prismaTurmasRepository, prismaDisciplinasRepository, prismaProfessoresRepository, prismaAlunosRepository);
+    const updateLembreteService = new UpdateLembreteService(prismaLembretesRepository, prismaTurmasRepository, prismaDisciplinasRepository, prismaProfessoresRepository, prismaAlunosRepository, prismaSerieHasDisciplinasRepository);
 
     // Executando o service
     const lembrete = await updateLembreteService.execute({
