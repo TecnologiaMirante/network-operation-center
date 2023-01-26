@@ -53,6 +53,7 @@ class UpdateLembreteController {
       title,
       description,
       data: data_formatada,
+      data_masked: data.toDateString(),
       start: start_formatada,
       end: end_formatada,
       id_turma, 

@@ -11,6 +11,7 @@ interface UpdateLembreteRequest {
   title: string;
   description: string;
   data: Date;
+  data_masked: string;
   start: Date;
   end: Date;
   id_turma?: string;    
@@ -36,7 +37,7 @@ export class UpdateLembreteService {
   async execute(request: UpdateLembreteRequest) {
     
     // Dados do service
-    const { id, title, description, data, start, end, id_turma, id_disciplina, id_aluno, id_professor } = request;
+    const { id, title, description, data, data_masked, start, end, id_turma, id_disciplina, id_aluno, id_professor } = request;
 
     // Se id_turma for inserido, busca se a turma existe e retorna erro caso não
     if (id_turma) {
@@ -87,6 +88,7 @@ export class UpdateLembreteService {
       title,
       description,
       data,
+      data_masked,
       start,
       end,
       id_turma, 
