@@ -38,7 +38,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "SET HOST=35.199.114.75 && SET PORT=3006 && react-scripts start",
+    "start": "IP=35.199.114.75 && PORT=3006 && react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
