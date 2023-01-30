@@ -37,6 +37,7 @@ export class ChangePasswordService {
     const passwordHash = await hash(new_password, 8);
 
     // Se der tudo certo, altera os dados encontrados
-    return await this.escolaUsersRepository.changePassword({ id_user, new_password: passwordHash });
+    return await this.escolaUsersRepository.changePassword({ id_user, new_password });
+    // return await this.escolaUsersRepository.changePassword({ id_user, new_password: passwordHash });
   }
 }
