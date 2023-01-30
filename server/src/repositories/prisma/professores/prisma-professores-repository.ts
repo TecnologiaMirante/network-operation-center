@@ -30,17 +30,87 @@ export class PrismaProfessoresRepository implements ProfessoresRepository {
   }
 
   async find({ id }: ProfessorFind) {
-    const Professor = await prisma.professor.findUnique(
+    const professor = await prisma.professor.findUnique(
       {
         where: {
           id
         },
         include: {
-          escola_user: true
+          escola_user: true,
+          _count: {
+            select: {
+              ProfessorHasDisciplina: true,
+            }
+          }
         }
       }
     );
-    return Professor;
+
+    // Buscando quantidade de turmas do professor
+    const turmas = await prisma.turma.findMany({
+      select: {
+        ProfessorHasDisciplinaTurma: {
+          where: {
+            professor_has_disciplinas: {
+              id_professor: id
+            }
+          },
+          select: {
+            turma: true
+          }
+        }
+      }
+    })
+
+    const turmas_final = [];
+    for (let turma of turmas) {
+      turmas_final.push(turma.ProfessorHasDisciplinaTurma[0])
+    }
+
+    // Buscando quantidade de series do professor
+    const series = await prisma.serie.findMany({
+      select: {
+        Turma: {
+          select: {
+            ProfessorHasDisciplinaTurma: {
+              where: {
+                professor_has_disciplinas: {
+                  id_professor: id
+                }
+              },
+              select: {
+                turma: {
+                  select: {
+                    id: true,
+                    name: true,
+                    serie: {
+                      select: {
+                        id: true,
+                        name: true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    })
+
+    const series_final_raw = [];
+    for (let serie of series) {
+      if(serie.Turma.length > 0) {
+        series_final_raw.push(serie)
+      }
+    }
+
+    Object(professor).num_disciplinas = professor?._count.ProfessorHasDisciplina;
+    Object(professor).num_turmas = turmas_final.length;
+    Object(professor).num_series = series.length;
+    delete Object(professor)._count;
+
+    return professor;
   }
 
   async delete({ id }: ProfessorDelete) {

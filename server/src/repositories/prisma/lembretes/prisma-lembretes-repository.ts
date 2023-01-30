@@ -64,10 +64,8 @@ export class PrismaLembretesRepository implements LembretesRepository {
       Object(lembrete).data = lembrete.data.toLocaleString();
       Object(lembrete).start = lembrete.start.toLocaleString();
       Object(lembrete).end = lembrete.end.toLocaleString();
-
     }
-    console.log("tentando achar error 2",lembretes)
-
+    
     return lembretes;
   }
 

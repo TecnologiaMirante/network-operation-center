@@ -100,17 +100,16 @@ export class PrismaEscolaUsersRepository implements EscolaUsersRepository {
           id: true,
           Professor: {
             select: {
-              id: true
-            }
-          }
+              id: true,
+            },
+          },
         }
       }
     );
 
-    // Arrumar futuramente para caso seja professor, aluno ou outro cargo
     const escolaUser_final = {
       id: escolaUser?.Professor[0].id,
-      id_senha: id
+      id_senha: id,
     }
 
     return escolaUser_final;
