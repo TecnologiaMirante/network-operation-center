@@ -3,14 +3,14 @@ import { SeriesRepository } from "../../repositories/interfaces/series/series-re
 import { DisciplinasRepository } from "../../repositories/interfaces/disciplinas/disciplinas-repository";
 
 // Interface
-interface FindConteudoBySerieDisciplinaRequest {
-  id: string;
+interface GetConteudosBySerieDisciplinaRequest {
+  id_professor: string,
   id_serie: string, 
   id_disciplina: string
 }
 
 // Service
-export class FindConteudoBySerieDisciplinaService {
+export class GetConteudosBySerieDisciplinaService {
   
   // Recebendo o repositório
   constructor(
@@ -20,18 +20,10 @@ export class FindConteudoBySerieDisciplinaService {
   ) {}
 
   // Executando o service
-  async execute(request: FindConteudoBySerieDisciplinaRequest) {
+  async execute(request: GetConteudosBySerieDisciplinaRequest) {
     
     // Dados do service 
-    const { id, id_serie, id_disciplina } = request;
-
-    try {
-      if (!(await this.conteudosRepository.find({ id }))) {
-        return new Error("Conteúdo inexistente!");
-      }
-    } catch (err) {
-      return err;
-    }
+    const { id_professor, id_serie, id_disciplina } = request;
 
     try {
       if (!(await this.seriesRepository.find({ id: id_serie }))) {
@@ -51,43 +43,15 @@ export class FindConteudoBySerieDisciplinaService {
 
     try {
       // Buscando ...
-      const conteudo = await this.conteudosRepository.findBySerieDisciplina({ id, id_serie, id_disciplina })
+      const conteudos = await this.conteudosRepository.getBySerieDisciplina({ id_professor, id_serie, id_disciplina })
 
       // Verificando se o conteúdo existe
-      if(!conteudo){
+      if(!conteudos){
         // Se não existir, retorna errro
         return new Error("Conteúdo inexistente");
       }
 
-      // Retornando os dados para o controller
-      const aulas = [
-        {
-          name: "aulas",
-          items: {
-            "array_conteudos":Object(conteudo).aulas
-          }
-        },
-        {
-          name: "conteudos",
-          items: Object(conteudo).conteudo
-        },
-        {
-          name: "atividades",
-          items: {
-            "array_conteudos":Object(conteudo).atividades
-          }
-        },
-        {
-          name: "materiais",
-          items: {
-            "array_conteudos":[]
-          }
-        },
-      ]
-
-      return aulas;
-
-      return conteudo;
+      return conteudos;
     } catch (err) {
       return err;
     }

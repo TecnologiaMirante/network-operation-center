@@ -45,6 +45,7 @@ export class PrismaAlunosRepository implements AlunosRepository {
               name: true,
               avatar: true,
               mat: true,
+              genre: true,
               escola: {
                 select: {
                   name: true
@@ -71,12 +72,13 @@ export class PrismaAlunosRepository implements AlunosRepository {
     
     const aluno_final = {
       id: aluno?.id,
-      // avatar: aluno?.escola_user?.avatar,
-      points: aluno?.points,
+      avatar: aluno?.escola_user?.avatar,
+      points: Math.round(Object(aluno).points),
       name: aluno?.escola_user?.name,
       mat: aluno?.escola_user?.mat,
       escola_name: aluno?.escola_user?.escola?.name,
       turma_name: aluno?.turma?.name,
+      genre: aluno?.escola_user.genre
     }
 
     return aluno_final;

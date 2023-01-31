@@ -8,7 +8,6 @@ export class PrismaAlunoRespondeAtividadesRepository implements AlunoRespondeAti
 
   //   io.of("/conquistas").on("connection", async (socket) => {
     
-  //     // console.log("FUNCIONOU, PORRA")
   //     // const teste = "sim, a conquista funciona!";
   //     // socket.emit("RESPONDA_X_ATIVIDADE", teste)
       

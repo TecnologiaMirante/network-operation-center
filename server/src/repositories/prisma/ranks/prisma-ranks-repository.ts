@@ -102,7 +102,7 @@ export class PrismaRanksRepository implements RanksRepository {
     // Organizando os dados da turma
     for (let aux of alunos_serie) {
       Object(aux).name = aux.aluno?.escola_user?.name
-      Object(aux).points = aux.aluno?.points
+      Object(aux).points = Math.round(Object(aux).aluno.points)
       delete Object(aux).aluno
     }
 
@@ -156,7 +156,7 @@ export class PrismaRanksRepository implements RanksRepository {
     // Organizando os dados da turma
     for (let aux of alunos_turma) {
       Object(aux).name = aux.aluno?.escola_user?.name
-      Object(aux).points = aux.aluno?.points
+      Object(aux).points = Math.round(Object(aux).aluno.points)
       delete Object(aux).aluno
     }
 
@@ -212,12 +212,12 @@ export class PrismaRanksRepository implements RanksRepository {
     let position_escola = index;
     position_escola += 1
 
-    const points_aluno = alunos_escola[index].aluno?.points;
+    const points_aluno = Math.round(Object(alunos_escola[index]).aluno.points);
 
     // Organizando os dados da turma
     for (let aux of alunos_escola) {
       Object(aux).name = aux.aluno?.escola_user?.name
-      Object(aux).points = aux.aluno?.points
+      Object(aux).points = Math.round(Object(aux).aluno.points)
       delete Object(aux).aluno
     }
 

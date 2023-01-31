@@ -21,6 +21,12 @@ export interface ConteudoGetByProfessor {
     created_by: string;
 }
 
+export interface ConteudoGetBySerieDisciplina {
+    id_professor: string;
+    id_serie: string;
+    id_disciplina: string;
+}
+
 export interface ConteudoFindBySerieDisciplina {
     id_serie: string;
     id_disciplina: string;
@@ -52,6 +58,7 @@ export interface ConteudosRepository {
     find: (data: ConteudoFind) => Promise<Object | null>;
     findByAluno: (data: ConteudoFindByAluno) => Promise<Object | null>;
     getByProfessor: (data: ConteudoGetByProfessor) => Promise<Object | null>;
+    getBySerieDisciplina: (data: ConteudoGetBySerieDisciplina) => Promise<Object | null>;
     findBySerieDisciplina: (data: ConteudoFindBySerieDisciplina) => Promise<Object | null>;
     delete: (data: ConteudoDelete) => Promise<void>;
     update: (data: ConteudoUpdate) => Promise<Object>;

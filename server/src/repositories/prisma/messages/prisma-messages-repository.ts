@@ -26,7 +26,7 @@ export class PrismaMessagesRepository implements MessagesRepository {
             id_room
           },
           orderBy: {
-            created_at: "asc"
+            created_at: "desc"
           }
         });
         return rooms;
@@ -37,7 +37,7 @@ export class PrismaMessagesRepository implements MessagesRepository {
             id_room
           },
           orderBy: {
-            created_at: "desc"
+            created_at: "asc"
           }
         });
         return rooms;

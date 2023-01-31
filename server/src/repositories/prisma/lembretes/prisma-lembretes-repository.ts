@@ -33,18 +33,28 @@ export class PrismaLembretesRepository implements LembretesRepository {
    
 
     for (let lembrete of lembretes) {
-      Object(lembrete).data = lembrete.data.toLocaleDateString();
-      Object(lembrete).start = lembrete.start.toLocaleTimeString();
-      Object(lembrete).end = lembrete.end.toLocaleTimeString();
+      Object(lembrete).data = lembrete.data.toLocaleDateString('pt-br');
+      Object(lembrete).start = lembrete.start.toLocaleTimeString('pt-br');
+      Object(lembrete).end = lembrete.end.toLocaleTimeString('pt-br');
     }
 
     return lembretes;
   }
 
   async getByAluno({ id_aluno }: LembreteGetByAluno) {
-    const lembretes = await prisma.lembrete.findMany({
+
+    const turma = await prisma.aluno.findFirst({
       where: {
-        id_aluno
+        id: id_aluno
+      },
+      select: {
+        id_turma: true
+      }
+    });
+
+    const lembretesTurma = await prisma.lembrete.findMany({
+      where: {
+        id_turma: Object(turma).id_turma
       },     
       select: {
         id: true,
@@ -59,11 +69,31 @@ export class PrismaLembretesRepository implements LembretesRepository {
         title: "asc"
       }
     })
+
+    const lembretesAlunos = await prisma.lembrete.findMany({
+      where: {
+        id_aluno,
+      },     
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        data: true,
+        data_masked: true,
+        start: true,
+        end: true,
+      },
+      orderBy: {
+        title: "asc"
+      }
+    })
+
+    const lembretes = [...lembretesTurma, ...lembretesAlunos]
     
     for (let lembrete of lembretes) {
-      Object(lembrete).data = lembrete.data.toLocaleString();
-      Object(lembrete).start = lembrete.start.toLocaleString();
-      Object(lembrete).end = lembrete.end.toLocaleString();
+      Object(lembrete).data = lembrete.data.toLocaleString('pt-br');
+      Object(lembrete).start = lembrete.start.toLocaleString('pt-br');
+      Object(lembrete).end = lembrete.end.toLocaleString('pt-br');
     }
     
     return lembretes;
@@ -84,9 +114,9 @@ export class PrismaLembretesRepository implements LembretesRepository {
       }
     );
 
-    Object(lembrete).data = Object(lembrete).data.toLocaleDateString();
-    Object(lembrete).start = Object(lembrete).start.toLocaleTimeString();
-    Object(lembrete).end = Object(lembrete).end.toLocaleTimeString();
+    Object(lembrete).data = Object(lembrete).data.toLocaleDateString('pt-br');
+    Object(lembrete).start = Object(lembrete).start.toLocaleTimeString('pt-br');
+    Object(lembrete).end = Object(lembrete).end.toLocaleTimeString('pt-br');
 
     return lembrete;
   }

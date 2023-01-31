@@ -202,11 +202,11 @@ import { FindConteudoBySerieDisciplinaController } from "../controllers/conteudo
 import { FindAtividadeWebViewController } from "../controllers/atividades/FindAtividadeWebViewController";
 import { GetOpenRoomsController } from "../controllers/rooms/GetOpenRoomsSocketController";
 import { UpdateLembreteController } from "../controllers/lembretes/UpdateLembreteController";
-import { GetAlunoHasConquistasByAlunoService } from "../services/conquistas/aluno_has_conquistas/GetAlunoHasConquistasGetByAlunoService";
 import { GetAlunoHasConquistasByAlunoController } from "../controllers/conquistas/GetAluno_Has_ConquistasGetByAlunoController";
 import { UpdateConquistasController } from "../controllers/conquistas/UpdateConquistasController";
 import { GetConquistasController } from "../controllers/conquistas/GetConquistasController";
 import { FindLembreteController } from "../controllers/lembretes/FindLembreteController";
+import { GetConteudosBySerieDisciplinaController } from "../controllers/conteudos/GetConteudosBySerieDisciplinaController";
 
 const router = Router();
 
@@ -623,6 +623,10 @@ router
 router
   .route("/conteudos/:id/:id_serie/:id_disciplina")
   .get(new FindConteudoBySerieDisciplinaController().handle)
+
+  router
+  .route("/conteudosSerieDisciplina/:id_professor/:id_serie/:id_disciplina")
+  .get(new GetConteudosBySerieDisciplinaController().handle)
 
   router
   .route("/conteudos/:id/:id_aluno")

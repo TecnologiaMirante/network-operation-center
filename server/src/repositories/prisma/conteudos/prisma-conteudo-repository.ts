@@ -5,7 +5,8 @@ import { ConteudoCreateData, ConteudosRepository,
   ConteudoGetByAlunoDisciplina, 
   ConteudoFindByAluno, 
   ConteudoGetByProfessor,
-  ConteudoFindBySerieDisciplina
+  ConteudoFindBySerieDisciplina,
+  ConteudoGetBySerieDisciplina
 } from "../../interfaces/conteudos/conteudo-repository";
 
 export class PrismaConteudosRepository implements ConteudosRepository {
@@ -84,12 +85,13 @@ export class PrismaConteudosRepository implements ConteudosRepository {
         }
       }
     });
- 
+
     let array_conteudos = [];
 
     // Percorrendo o array de itens (aulas, atividades)
     Object(conteudo).array_conteudos_base = Object(conteudo).Conteudo_has_itens;
     delete Object(conteudo).Conteudo_has_itens;
+
 
     // Se o array de conteudos não estiver vazio
     if (Object(conteudo).array_conteudos_base.length > 0) {
@@ -122,8 +124,7 @@ export class PrismaConteudosRepository implements ConteudosRepository {
       let index = 0;
 
       // Removendo duplicatas
-      for (let item_conteudo of array_conteudos) {
-
+      for (let item_conteudo of Object(conteudo).array_conteudos) {
         // Verificando para as aulas
         if (item_conteudo.type == "aula") {
 
@@ -168,6 +169,100 @@ export class PrismaConteudosRepository implements ConteudosRepository {
     }
 
     return {aulas, conteudo, atividades};
+  }
+
+  async getBySerieDisciplina( { id_professor, id_serie, id_disciplina }: ConteudoGetBySerieDisciplina ) {
+
+  //   // Buscando as aulas existentes no banco de dados
+  //   const aulas = await prisma.aula.findMany(
+  //     {
+  //       where: {
+  //         id_serie, id_disciplina
+  //       },
+  //       orderBy: {
+  //         disciplina: {
+  //           name: "asc"
+  //         }
+  //       }
+  //     }
+  //   );
+
+  //  // Buscando as atividades cadastradas
+  //  const atividades = await prisma.atividade.findMany({
+  //   where: {
+  //     id_serie, id_disciplina
+  //   },
+  //   orderBy: {
+  //     title: "asc"
+  //   }
+  //   });
+    
+    // Buscando os conteúdos existentes
+    const conteudos = await prisma.conteudo.findMany({
+      where: {
+        id_serie: id_serie,
+        id_disciplina: id_disciplina,
+        created_by: id_professor
+      },
+      include: {
+        Conteudo_has_itens: {
+          select: {
+            aula: true,
+            atividade: true
+          },
+          orderBy: {
+            created_at: "asc"
+          }
+        }
+      }
+    });
+
+    console.log(id_serie)
+    console.log(id_disciplina)
+    console.log(conteudos)
+
+    let array_conteudos = [];
+
+    for (let conteudo of conteudos) {
+
+      // Percorrendo o array de itens (aulas, atividades)
+      Object(conteudo).array_conteudos_base = Object(conteudo).Conteudo_has_itens;
+      delete Object(conteudo).Conteudo_has_itens;
+  
+      // Se o array de conteudos não estiver vazio
+      if (Object(conteudo).array_conteudos_base.length > 0) {
+  
+        for (let item of Object(conteudo).array_conteudos_base) {
+  
+          // Removendo o campo da aula caso ela seja nula
+          if (item.aula == null) {
+            delete item.aula;
+  
+            Object(item.atividade).type = "atividade";
+  
+            array_conteudos.push(item.atividade)
+          }
+          
+          // Removendo o campo da atividade caso ela seja nula
+          if (item.atividade == null) {
+            delete item.atividade;
+  
+            Object(item.aula).type = "aula";
+  
+            array_conteudos.push(item.aula)
+          }
+        }
+    
+        // Organizando o nome do campo
+        Object(conteudo).array_conteudos = array_conteudos
+        delete Object(conteudo).array_conteudos_base
+  
+        let index = 0;
+      }
+    }
+
+
+    return conteudos;
   }
 
   async getByAlunoDisciplina({ id_aluno, id_disciplina }: ConteudoGetByAlunoDisciplina) {
@@ -423,16 +518,7 @@ export class PrismaConteudosRepository implements ConteudosRepository {
         },
         include: {
           disciplina: true,
-          Conteudo_has_atividade: {
-            select: {
-              atividade: true
-            }
-          },
-          Conteudo_has_aula: {
-            select: {
-              aula: true
-            }
-          }
+          Conteudo_has_itens: true
         }
       }
     );
@@ -440,13 +526,14 @@ export class PrismaConteudosRepository implements ConteudosRepository {
     const array_atvs = [];
     const array_aulas = [];
 
-    if (Object(conteudo).Conteudo_has_atividade) {
-      for (let x of Object(conteudo).Conteudo_has_atividade) {
-        array_atvs.push(Object.values(x)[0])
-      }
-  
-      for (let x of Object(conteudo).Conteudo_has_aula) {
-        array_aulas.push(Object.values(x)[0])
+    if (Object(conteudo).Conteudo_has_itens) {
+      for (let x of Object(conteudo).Conteudo_has_itens) {
+        if(x.type == "aula") {
+          array_aulas.push(x)
+        }
+        if(x.type == "atividade") {
+          array_atvs.push(x)
+        }
       }
     }
 
@@ -455,6 +542,7 @@ export class PrismaConteudosRepository implements ConteudosRepository {
 
     Object(conteudo).Aula = array_aulas
     delete Object(conteudo).Conteudo_has_aula
+    delete Object(conteudo).Conteudo_has_itens
 
     return conteudo;
   }
