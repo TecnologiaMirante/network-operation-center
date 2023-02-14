@@ -14,7 +14,6 @@ import { GetAulasService } from "../../services/aulas/GetAulasService";
 
 class CreateAulaController {
   async handle(req:Request, res:Response) {
-    console.log("teste")
     // 1. Realizando requisição para JMV ...
     // ##############################################################################################################
 
