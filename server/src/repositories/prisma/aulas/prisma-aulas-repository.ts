@@ -10,8 +10,8 @@ export class PrismaAulasRepository implements AulasRepository {
     // Irei realizar um procedimento tal que só permaneça o título, então bora ...
 
     let final_title;
-    final_title = title.substring(9);
-    final_title = final_title.slice(0, -4);
+    final_title = title.substring(2);
+    final_title = final_title.trim();
     
     return await prisma.aula.create({
       data: {
@@ -202,8 +202,8 @@ export class PrismaAulasRepository implements AulasRepository {
     
     let final_title;
     if(title) {
-      final_title = title.substring(9);
-      final_title = final_title.slice(0, -4);
+      final_title = title.substring(2);
+      final_title = final_title.trim();
     }
     
     await prisma.aula.update({

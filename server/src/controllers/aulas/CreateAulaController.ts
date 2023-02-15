@@ -142,111 +142,286 @@ class CreateAulaController {
       // ... esta possui vídeos cadastrados
       if (galeria.videos) {
 
-        // Dividindo o nome da galeria em uma lista com o "-"
-        const galeria_name = galeria.name.split("-");
+        const serie_id = series[0].id;
+        const disciplina_id = disciplinas[0].id;
+        
+        if(disciplinas[0].code == galeria.name) {
 
-        // Atribuindo as SÉRIES para uma constante e removendo os possíveis espaços em branco antes e depois da string
-        const galeria_serie = galeria_name[0].trim()
-
-        // Atribuindo as DISCIPLINAS para uma constante e removendo os possíveis espaços em branco antes e depois da string
-        const galeria_disciplina = galeria_name[1].trim()
-
-        // Caso queira/precise remover TODOS os espaços em branco, inclusive dentro da string, aqui fica comentada esta opção ...
-        // const galeria_serie = galeria_name[0].replace(/\s/g,'')
-
-        // Verificando uma série por vez para ...
-        for (var serie of series) {
-
-          // ... saber SE o nome dela está inclusa no nome da galeria
-          if (galeria_serie == serie.name.trim()) {
-            
-            // SE estiver inclusa, salvamos o id da SÉRIE em uma constante
-            const serie_id = serie.id;
-
-            // Agora verificamos uma disciplina por vez ...
-            for (var disciplina of disciplinas) {
-
-              // ... para saber SE o nome dela está inclusa TAMBÉM no nome da galeria
-              if (galeria_disciplina == disciplina.name.trim()) {
-
-                // Se estiver inclusa, salvamos em uma constante o id da DISCIPLINA
-                var disciplina_id = disciplina.id;
-
-                // Agora iremos, vídeo por vídeo, da galeria da vez do laço, cadastrá-lo com o id da série e disciplina encontrados
-                for (var video of galeria.videos) {
+          // Agora iremos, vídeo por vídeo, da galeria da vez do laço, cadastrá-lo com o id da série e disciplina encontrados
+          for (var video of galeria.videos) {
   
-                  // Antes de cadastrar, precisamos ver se a aula já está cadastrada através do hash dela
-                  const aula = await findAulaByHashService.execute({ hash: video.hash });
-                  
-                  // Repositório do prisma
-                  const prismaSerieHasDisciplinasRepository = new PrismaSerieHasDisciplinasRepository();
+            // Antes de cadastrar, precisamos ver se a aula já está cadastrada através do hash dela
+            const aula = await findAulaByHashService.execute({ hash: video.hash });
+            
+            // Repositório do prisma
+            const prismaSerieHasDisciplinasRepository = new PrismaSerieHasDisciplinasRepository();
 
-                  // Service para verificar se existe relação entre a série e a disciplina
-                  const findRelationSerieHasDisciplinaService = new FindRelationSerieHasDisciplinaService(prismaSerieHasDisciplinasRepository);
-                  
-                  // Verificando se existe relação
-                  const relacao = await findRelationSerieHasDisciplinaService.execute({ id_disciplina: disciplina_id, id_serie: serie_id });
+            // Service para verificar se existe relação entre a série e a disciplina
+            const findRelationSerieHasDisciplinaService = new FindRelationSerieHasDisciplinaService(prismaSerieHasDisciplinasRepository);
+            
+            // Verificando se existe relação
+            const relacao = await findRelationSerieHasDisciplinaService.execute({ id_disciplina: disciplina_id, id_serie: serie_id });
 
-                  // Se a relação existir ...
-                  // Ele cadastra as aulas
-                  if (!(relacao instanceof Error)) {
- 
-                    // Se ela não estiver cadastrada...
-                    if(!aula) {
-                      
-                      // Cadastra a aula
-                      const aula_nova = await createAulaService.execute({
-                        hash: video.hash, 
-                        title: video.name, 
-                        file: video.url, 
-                        thumb: video.covers[0],
-                        time: video.time, 
-                        id_serie: serie_id,
-                        id_disciplina: disciplina_id 
-                      })
-      
-                      // Caso dê algum erro, retorna a mensagem e o status de erro para o usuário
-                      if (aula_nova instanceof Error) {
-                        return res.status(400).send(aula_nova.message);
-                      }
-                    }
-    
-                    // Caso ela já exista, ele vai atualizar a mesma
-                    if (aula) {
-    
-                      // Atualizando a aula
-                      const aula_att = await updateAulaService.execute({
-                        id: Object(aula).id,
-                        hash: video.hash, 
-                        title: video.name, 
-                        file: video.url, 
-                        thumb: video.covers[0],
-                        time: video.time, 
-                        id_serie: serie_id,
-                        id_disciplina: disciplina_id 
-                      })
-      
-                      // Caso dê algum erro, retorna a mensagem e o status de erro para o usuário
-                      if (aula_att instanceof Error) {
-                        return res.status(400).send(aula_att.message);
-                      }
-                    }
-                  }
+            // Se a relação existir ...
+            // Ele cadastra as aulas
+            if (!(relacao instanceof Error)) {
 
+              // Se ela não estiver cadastrada...
+              if(!aula) {
+                // Cadastra a aula
+                const aula_nova = await createAulaService.execute({
+                  hash: video.hash, 
+                  title: video.name, 
+                  file: video.url, 
+                  thumb: video.covers[0],
+                  time: video.time, 
+                  id_serie: serie_id,
+                  id_disciplina: disciplina_id 
+                })
+
+                // Caso dê algum erro, retorna a mensagem e o status de erro para o usuário
+                if (aula_nova instanceof Error) {
+                  return res.status(400).send(aula_nova.message);
+                }
+              }
+
+              // Caso ela já exista, ele vai atualizar a mesma
+              if (aula) {
+
+                // Atualizando a aula
+                const aula_att = await updateAulaService.execute({
+                  id: Object(aula).id,
+                  hash: video.hash, 
+                  title: video.name, 
+                  file: video.url, 
+                  thumb: video.covers[0],
+                  time: video.time, 
+                  id_serie: serie_id,
+                  id_disciplina: disciplina_id 
+                })
+
+                // Caso dê algum erro, retorna a mensagem e o status de erro para o usuário
+                if (aula_att instanceof Error) {
+                  return res.status(400).send(aula_att.message);
                 }
               }
             }
           }
         }
+
+        // // Dividindo o nome da galeria em uma lista com o "-"
+        // const galeria_name = galeria.name.split("-");
+
+        // // Atribuindo as SÉRIES para uma constante e removendo os possíveis espaços em branco antes e depois da string
+        // const galeria_serie = galeria_name[0].trim()
+
+        // // Atribuindo as DISCIPLINAS para uma constante e removendo os possíveis espaços em branco antes e depois da string
+        // const galeria_disciplina = galeria_name[1].trim()
+
+        // // Caso queira/precise remover TODOS os espaços em branco, inclusive dentro da string, aqui fica comentada esta opção ...
+        // // const galeria_serie = galeria_name[0].replace(/\s/g,'')
+
+        // // Verificando uma série por vez para ...
+        // for (var serie of series) {
+
+        //   // ... saber SE o nome dela está inclusa no nome da galeria
+        //   if (galeria_serie == serie.name.trim()) {
+            
+        //     // SE estiver inclusa, salvamos o id da SÉRIE em uma constante
+        //     const serie_id = serie.id;
+
+        //     // Agora verificamos uma disciplina por vez ...
+        //     for (var disciplina of disciplinas) {
+
+        //       // ... para saber SE o nome dela está inclusa TAMBÉM no nome da galeria
+        //       if (galeria_disciplina == disciplina.name.trim()) {
+
+        //         // Se estiver inclusa, salvamos em uma constante o id da DISCIPLINA
+        //         var disciplina_id = disciplina.id;
+
+        //         // Agora iremos, vídeo por vídeo, da galeria da vez do laço, cadastrá-lo com o id da série e disciplina encontrados
+        //         for (var video of galeria.videos) {
+  
+        //           // Antes de cadastrar, precisamos ver se a aula já está cadastrada através do hash dela
+        //           const aula = await findAulaByHashService.execute({ hash: video.hash });
+                  
+        //           // Repositório do prisma
+        //           const prismaSerieHasDisciplinasRepository = new PrismaSerieHasDisciplinasRepository();
+
+        //           // Service para verificar se existe relação entre a série e a disciplina
+        //           const findRelationSerieHasDisciplinaService = new FindRelationSerieHasDisciplinaService(prismaSerieHasDisciplinasRepository);
+                  
+        //           // Verificando se existe relação
+        //           const relacao = await findRelationSerieHasDisciplinaService.execute({ id_disciplina: disciplina_id, id_serie: serie_id });
+
+        //           // Se a relação existir ...
+        //           // Ele cadastra as aulas
+        //           if (!(relacao instanceof Error)) {
+ 
+        //             // Se ela não estiver cadastrada...
+        //             if(!aula) {
+                      
+        //               // Cadastra a aula
+        //               const aula_nova = await createAulaService.execute({
+        //                 hash: video.hash, 
+        //                 title: video.name, 
+        //                 file: video.url, 
+        //                 thumb: video.covers[0],
+        //                 time: video.time, 
+        //                 id_serie: serie_id,
+        //                 id_disciplina: disciplina_id 
+        //               })
+      
+        //               // Caso dê algum erro, retorna a mensagem e o status de erro para o usuário
+        //               if (aula_nova instanceof Error) {
+        //                 return res.status(400).send(aula_nova.message);
+        //               }
+        //             }
+    
+        //             // Caso ela já exista, ele vai atualizar a mesma
+        //             if (aula) {
+    
+        //               // Atualizando a aula
+        //               const aula_att = await updateAulaService.execute({
+        //                 id: Object(aula).id,
+        //                 hash: video.hash, 
+        //                 title: video.name, 
+        //                 file: video.url, 
+        //                 thumb: video.covers[0],
+        //                 time: video.time, 
+        //                 id_serie: serie_id,
+        //                 id_disciplina: disciplina_id 
+        //               })
+      
+        //               // Caso dê algum erro, retorna a mensagem e o status de erro para o usuário
+        //               if (aula_att instanceof Error) {
+        //                 return res.status(400).send(aula_att.message);
+        //               }
+        //             }
+        //           }
+        //         }
+        //       }
+        //     }
+        //   }
+        // }
       }
     }
 
-    // Agora iremos fazer o seguinte:
-    // 1 - Ordenar as aulas
-    // 2 - Remover o número e o ".mp4" do título das aulas
-    const getAulasService = new GetAulasService(prismaAulasRepository);
 
-    const aulas = getAulasService.execute();
+
+
+
+    // // Verificando se, para cada galeria existente no banco de dados ...
+    // for (var galeria of galerias) {
+
+    //   // ... esta possui vídeos cadastrados
+    //   if (galeria.videos) {
+
+    //     // Dividindo o nome da galeria em uma lista com o "-"
+    //     const galeria_name = galeria.name.split("-");
+
+    //     // Atribuindo as SÉRIES para uma constante e removendo os possíveis espaços em branco antes e depois da string
+    //     const galeria_serie = galeria_name[0].trim()
+
+    //     // Atribuindo as DISCIPLINAS para uma constante e removendo os possíveis espaços em branco antes e depois da string
+    //     const galeria_disciplina = galeria_name[1].trim()
+
+    //     // Caso queira/precise remover TODOS os espaços em branco, inclusive dentro da string, aqui fica comentada esta opção ...
+    //     // const galeria_serie = galeria_name[0].replace(/\s/g,'')
+
+    //     // Verificando uma série por vez para ...
+    //     for (var serie of series) {
+
+    //       // ... saber SE o nome dela está inclusa no nome da galeria
+    //       if (galeria_serie == serie.name.trim()) {
+            
+    //         // SE estiver inclusa, salvamos o id da SÉRIE em uma constante
+    //         const serie_id = serie.id;
+
+    //         // Agora verificamos uma disciplina por vez ...
+    //         for (var disciplina of disciplinas) {
+
+    //           // ... para saber SE o nome dela está inclusa TAMBÉM no nome da galeria
+    //           if (galeria_disciplina == disciplina.name.trim()) {
+
+    //             // Se estiver inclusa, salvamos em uma constante o id da DISCIPLINA
+    //             var disciplina_id = disciplina.id;
+
+    //             // Agora iremos, vídeo por vídeo, da galeria da vez do laço, cadastrá-lo com o id da série e disciplina encontrados
+    //             for (var video of galeria.videos) {
+  
+    //               // Antes de cadastrar, precisamos ver se a aula já está cadastrada através do hash dela
+    //               const aula = await findAulaByHashService.execute({ hash: video.hash });
+                  
+    //               // Repositório do prisma
+    //               const prismaSerieHasDisciplinasRepository = new PrismaSerieHasDisciplinasRepository();
+
+    //               // Service para verificar se existe relação entre a série e a disciplina
+    //               const findRelationSerieHasDisciplinaService = new FindRelationSerieHasDisciplinaService(prismaSerieHasDisciplinasRepository);
+                  
+    //               // Verificando se existe relação
+    //               const relacao = await findRelationSerieHasDisciplinaService.execute({ id_disciplina: disciplina_id, id_serie: serie_id });
+
+    //               // Se a relação existir ...
+    //               // Ele cadastra as aulas
+    //               if (!(relacao instanceof Error)) {
+ 
+    //                 // Se ela não estiver cadastrada...
+    //                 if(!aula) {
+                      
+    //                   // Cadastra a aula
+    //                   const aula_nova = await createAulaService.execute({
+    //                     hash: video.hash, 
+    //                     title: video.name, 
+    //                     file: video.url, 
+    //                     thumb: video.covers[0],
+    //                     time: video.time, 
+    //                     id_serie: serie_id,
+    //                     id_disciplina: disciplina_id 
+    //                   })
+      
+    //                   // Caso dê algum erro, retorna a mensagem e o status de erro para o usuário
+    //                   if (aula_nova instanceof Error) {
+    //                     return res.status(400).send(aula_nova.message);
+    //                   }
+    //                 }
+    
+    //                 // Caso ela já exista, ele vai atualizar a mesma
+    //                 if (aula) {
+    
+    //                   // Atualizando a aula
+    //                   const aula_att = await updateAulaService.execute({
+    //                     id: Object(aula).id,
+    //                     hash: video.hash, 
+    //                     title: video.name, 
+    //                     file: video.url, 
+    //                     thumb: video.covers[0],
+    //                     time: video.time, 
+    //                     id_serie: serie_id,
+    //                     id_disciplina: disciplina_id 
+    //                   })
+      
+    //                   // Caso dê algum erro, retorna a mensagem e o status de erro para o usuário
+    //                   if (aula_att instanceof Error) {
+    //                     return res.status(400).send(aula_att.message);
+    //                   }
+    //                 }
+    //               }
+
+    //             }
+    //           }
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
+
+    // // Agora iremos fazer o seguinte:
+    // // 1 - Ordenar as aulas
+    // // 2 - Remover o número e o ".mp4" do título das aulas
+    // const getAulasService = new GetAulasService(prismaAulasRepository);
+
+    // const aulas = getAulasService.execute();
 
     // Retornando mensagem de sucesso para o usuário
     return res.status(201).send(
