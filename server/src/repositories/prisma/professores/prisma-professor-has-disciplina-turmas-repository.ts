@@ -88,8 +88,6 @@ export class PrismaProfessorHasDisciplinaTurmasRepository implements ProfessorHa
       }
     });
 
-    return dados
-
     // Agrupando por série
     const result = dados.reduce(function (r, a) {
       r[Object(a).turma.serie.name] = r[Object(a).turma.serie.name] || [];
