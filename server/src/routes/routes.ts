@@ -340,7 +340,7 @@ router
   .get(new GetProfessorHasDisciplinasByProfessorController().handle)
 
 router
-  .route("/escolas/users/professores/:id/series")
+  .route("/escolas/users/professores/:id_professor/series")
   .get(new GetSeriesProfessorHasDisciplinaTurmaController().handle)
 
 // #professores-aulas
