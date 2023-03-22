@@ -38,7 +38,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "set HOST=35.199.114.75 && react-scripts start",
+    "start": "set HOST=34.151.211.219 && react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
