@@ -217,10 +217,6 @@ export class PrismaConteudosRepository implements ConteudosRepository {
       }
     });
 
-    console.log(id_serie)
-    console.log(id_disciplina)
-    console.log(conteudos)
-
     let array_conteudos = [];
 
     for (let conteudo of conteudos) {

@@ -15,14 +15,6 @@ class CreateConteudoController {
     // Dados do corpo da requisição
     const { name, id_disciplina, id_serie, id_bimestre, created_by, array_conteudos, status } = req.body;
 
-    // console.log("\n\n\n =================================================")
-    // console.log("name: ", name)
-    // console.log("id_disciplina: ", id_disciplina)
-    // console.log("id_bimestre: ", id_bimestre)
-    // console.log("created_by: ", created_by)
-    // console.log("array_conteudos: ", array_conteudos)
-    // console.log("status: ", status)
-
     // Repositório dos modelos do Prisma
     const prismaConteudosRepository = new PrismaConteudosRepository();
     const prismaDisciplinasRepository = new PrismaDisciplinasRepository();
