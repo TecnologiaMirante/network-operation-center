@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { PrismaDisciplinasRepository } from "../../repositories/prisma/disciplinas/prisma-disciplinas-repository";
 import { UpdateDisciplinaService } from "../../services/disciplinas/UpdateDisciplinaService";
 import { PrismaEscolasRepository } from "../../repositories/prisma/escolas/prisma-escolas-repository";
+import { FindDisciplinaService } from "../../services/disciplinas/FindDisciplinaService";
 
 class UpdateDisciplinaController {
   async handle(req:Request, res:Response) {
@@ -19,8 +20,12 @@ class UpdateDisciplinaController {
     // Service
     const updateDisciplinaService = new UpdateDisciplinaService(prismaDisciplinasRepository, prismaEscolasRepository);
 
-    let bk_img = "";
-    let icon = "";
+    const findDisciplinaService = new FindDisciplinaService(prismaDisciplinasRepository);
+
+    const disciplinaAchada = await findDisciplinaService.execute({id});
+
+    let bk_img = Object(disciplinaAchada).bk_img;
+    let icon = Object(disciplinaAchada).icon;
 
     // // Vendo a parte do arquivo ÍCONE
     if(req.files != null || req.files != undefined) {
@@ -45,24 +50,24 @@ class UpdateDisciplinaController {
           icon = "http://192.168.6.20:3010/files/" + Object.values(req.files)[indice][0].filename;
         //  icon = "https://mais-edu.herokuapp.com/files/" + Object.values(req.files)[indice][0].filename;
         }
-
-        // Executando o service
-        const disciplina = await updateDisciplinaService.execute({
-          id,
-          name, 
-          code,
-          status,
-          id_escola,
-          icon,
-          bk_img,
-          bk_color
-        })
-
-        // Caso aconteça algum erro, interrompe o processo retorna a mensagem de erro
-        if(disciplina instanceof Error) {
-          return res.status(400).send(disciplina.message);
-        }
       }
+    }
+
+    // Executando o service
+    const disciplina = await updateDisciplinaService.execute({
+      id,
+      name, 
+      code,
+      status,
+      id_escola,
+      icon,
+      bk_img,
+      bk_color
+    })
+
+    // Caso aconteça algum erro, interrompe o processo retorna a mensagem de erro
+    if(disciplina instanceof Error) {
+      return res.status(400).send(disciplina.message);
     }
 
     // Retornando mensagem de sucesso para o usuário
