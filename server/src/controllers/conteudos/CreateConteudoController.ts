@@ -49,18 +49,10 @@ class CreateConteudoController {
     if(conteudo instanceof Error) {
       return res.status(400).send(conteudo.message);
     }
-
-    console.log(`name: ${name}`);
-    console.log(`id_disciplina: ${id_disciplina}`);
-    console.log(`id_serie: ${id_serie}`);
-    console.log(`id_bimestre: ${id_bimestre}`);
-    console.log(`created_by: ${created_by}`);
-    console.log(`array_conteudos: ${array_conteudos}`);
-    console.log(`status: ${status}`); 
-
+    
     // A variável "array_conteudos" é opcional, portanto, o service seguinte só é chamado caso ela não seja nula
     if (array_conteudos && array_conteudos.length != 0) {
-      console.log(array_conteudos)
+      
       // Service do Conteudo Has Itens =============================================================================================================================
       const createConteudoHasItensService = new CreateConteudoHasItensService(prismaConteudosRepository, prismaAulasRepository, prismaAtividadesRepository, prismaConteudoHasItensRepository);
       
