@@ -44,7 +44,7 @@ export class UpdateAulaService {
         return new Error("Série inexistente!");
       }
     }
-
+    console.log('ta aqui')
     try {
       // Criando ...
       const aula = await this.aulasRepository.update({

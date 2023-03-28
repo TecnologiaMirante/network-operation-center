@@ -1,7 +1,7 @@
 import { serverHttp } from "./http";
 import "./websocket";
 
-const port = process.env.PORT || 3010
+const port = process.env.PORT || 3011
 
 // Como criamos o server http utilizando o express, é possível utilizar o método "listen" do express
 serverHttp.listen(port, () => {

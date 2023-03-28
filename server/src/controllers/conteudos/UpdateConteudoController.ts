@@ -68,7 +68,8 @@ class UpdateConteudoController {
       }
 
       for (let item of array_conteudos) {
-        
+        console.log(item)
+
         if (item.type == "aula") {
           const result = await createConteudoHasItensService.execute({ 
             type: "aula",

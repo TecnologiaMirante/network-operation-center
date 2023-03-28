@@ -11,7 +11,10 @@ export class PrismaAulasRepository implements AulasRepository {
 
     let final_title;
     final_title = title.substring(9);
-    final_title = final_title.slice(0, -4);
+    final_title = final_title.slice(0, -1);
+    
+    console.log(title)
+    console.log(final_title)
     
     return await prisma.aula.create({
       data: {
@@ -202,8 +205,10 @@ export class PrismaAulasRepository implements AulasRepository {
     
     let final_title;
     if(title) {
-      final_title = title.substring(9);
-      final_title = final_title.slice(0, -4);
+      final_title = title.substring(2);
+      final_title = final_title.trim();
+
+      console.log(final_title)
     }
     
     await prisma.aula.update({

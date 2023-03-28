@@ -45,17 +45,18 @@ export class PrismaProfessorHasDisciplinaTurmasRepository implements ProfessorHa
   }
 
   async getSeriesByProfessor({ id_professor }: ProfessorHasDisciplinaTurmaGetSeriesByProfessor) {
-    
+
     // Buscando os dados
     const dados = await prisma.professorHasDisciplinaTurma.findMany({
       where: {
         professor_has_disciplinas: {
-          id_professor,
+          id_professor: id_professor,
         }
       },
       select: {
         professor_has_disciplinas: {
           select: {
+            id_professor: true,
             disciplina: {
               select: {
                 name: true,
@@ -114,8 +115,6 @@ export class PrismaProfessorHasDisciplinaTurmasRepository implements ProfessorHa
       
       // array de disciplinas
       const array_disciplinas = [];
-
-
 
       // Percorrendo o array de disciplinas
       for (let disciplina of itens.disciplinas) {
