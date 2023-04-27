@@ -218,6 +218,9 @@ export class PrismaConteudosRepository implements ConteudosRepository {
             created_at: "asc"
           }
         }
+      },
+      orderBy: {
+        created_at: "asc"
       }
     });
 
@@ -300,6 +303,9 @@ export class PrismaConteudosRepository implements ConteudosRepository {
             }
           }
         },
+      },
+      orderBy: {
+        created_at: "asc"
       }
     });
     
