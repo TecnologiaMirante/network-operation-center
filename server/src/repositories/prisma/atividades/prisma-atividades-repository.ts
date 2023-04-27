@@ -48,6 +48,11 @@ export class PrismaAtividadesRepository implements AtividadesRepository {
                   }
                 }
               }
+            },
+            orderBy: {
+              questao: {
+                created_at: "asc"
+              }
             }
           }
         }
