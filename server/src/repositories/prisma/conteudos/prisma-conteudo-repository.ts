@@ -41,6 +41,9 @@ export class PrismaConteudosRepository implements ConteudosRepository {
       select: {
         id: true,
         name: true,
+      },
+      orderBy: {
+        created_at: "asc"
       }
     });
     return conteudos;
@@ -304,9 +307,6 @@ export class PrismaConteudosRepository implements ConteudosRepository {
           }
         },
       },
-      orderBy: {
-        created_at: "asc"
-      }
     });
     
     // Organizando os conteudos que chegaram utilizando só os campos que serão importantes
