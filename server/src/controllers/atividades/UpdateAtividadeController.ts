@@ -128,16 +128,16 @@ class UpdateAtividadeController {
 
     // Executando o service
     const atividade_atualizada = await findAtividadeService.execute({id})
-    
+        
     // Salvando as questões em uma variável própria
     const questoes_antigas = Object(atividade_atualizada).questoes;
-
+    
     // 2 - VERIFICANDO AS QUESTÕES VINDAS DA REQUISIÇÃO ================================================================================================
     
     // Dados do corpo da requisição
     // const { questoes } = req.body;
     const questoes_novas = req.body.questoes;
-
+    
     // Na hora de atualizar as questões da atividade, existem 3 casos
     // 1 - Editar a questão
     // 2 - Colocar questões que não existem
@@ -166,7 +166,7 @@ class UpdateAtividadeController {
       const prismaQuestoesRepository = new PrismaQuestoesRepository();    
 
       // Percorrendo as questões novas vindas da requisição
-      for (let question of questoes_novas) {
+      for (let question of questoes_novas) {        
 
         // Verificando se a questão tem id
         if (question.id) {
@@ -231,13 +231,13 @@ class UpdateAtividadeController {
           }
 
         } 
-
+        
         // Se não tiver, ele cria a questão com o relacionamento entre a questão e a atividade
-        else {
+        else {    
           try {
             // Instância do service
-            const createQuestaoService = new CreateQuestaoService(prismaQuestoesRepository);
-        
+            const createQuestaoService = new CreateQuestaoService(prismaQuestoesRepository);                 
+
             try {
               // Executando o service
               const questao = await createQuestaoService.execute({
@@ -311,6 +311,8 @@ class UpdateAtividadeController {
       const deleteAtividadeHasQuestoesService = new DeleteAtividadeHasQuestoesService(prismaAtividadeHasQuestoesRepository);
 
       for (let questao_antiga of questoes_antigas) {
+
+        console.log(questoes_antigas)
 
         // Verificando se a questão antiga está no array das novas
         let index = questoes_novas.findIndex((val: { id: any; }) => val.id == questao_antiga.id)

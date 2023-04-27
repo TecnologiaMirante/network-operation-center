@@ -113,10 +113,10 @@ export class PrismaAtividadesRepository implements AtividadesRepository {
       {
         where: {
           id
-        },
+        },        
         select: {
           title: true,
-          Atividade_has_questao: {
+          Atividade_has_questao: {            
             select: {
               questao: {
                 select: {
@@ -130,11 +130,16 @@ export class PrismaAtividadesRepository implements AtividadesRepository {
                       is_correct: true,
                     },
                   }
-                }
+                },                
+              }
+            },
+            orderBy: {
+              questao: {
+                created_at: "asc"
               }
             }
           }
-        }
+        },        
       }
     );
 

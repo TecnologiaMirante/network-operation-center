@@ -79,7 +79,7 @@ class CreateAtividadeController {
       thumb,
       id_serie,
       id_disciplina
-    })
+    })    
     
     // Caso aconteça algum erro, interrompe o processo retorna a mensagem de erro
     if(atividade instanceof Error) {
@@ -99,7 +99,7 @@ class CreateAtividadeController {
 
     for (let item of questions) {
 
-        try {
+      try {
             // Executando o service
             const questao = await createQuestaoService.execute({
                 title: item.title_question,
@@ -120,16 +120,16 @@ class CreateAtividadeController {
 
             for (let item1 of item.options) {
                 item1.id_questao = Object(questao).id;
-            }
+            }            
 
             try {
                 const opcoes = await createManyOpcoesService.execute({
                     array_opcao: item.options
                 });  
-                
               } catch (err) {
                 return err;
-              }
+            } 
+
               
             // 4 - RELACIONANDO A QUESTÃO COM A ATIVIDADE
 
