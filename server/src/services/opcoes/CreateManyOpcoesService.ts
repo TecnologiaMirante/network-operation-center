@@ -39,8 +39,10 @@ export class CreateManyOpcoesService {
     }
     
     // Criando ...
-    return await this.opcoesRepository.createMany({
+    const dado = await this.opcoesRepository.createMany({
       data: array_opcao
     })
+
+    return dado;
   }
 }
