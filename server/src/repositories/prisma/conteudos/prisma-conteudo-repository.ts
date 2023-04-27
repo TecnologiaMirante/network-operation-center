@@ -25,7 +25,11 @@ export class PrismaConteudosRepository implements ConteudosRepository {
   };
 
   async get() {
-    const conteudos = await prisma.conteudo.findMany();
+    const conteudos = await prisma.conteudo.findMany({
+      orderBy: {
+        created_at: "asc"
+      }
+    });
     return conteudos;
   }
 
