@@ -8,7 +8,6 @@ export function Sidebar() {
 
   const Menus = [
     { title: "Home" },
-    { title: "Conquistas" },
     { title: "Dados" },
     { title: "Disciplinas" },
 
