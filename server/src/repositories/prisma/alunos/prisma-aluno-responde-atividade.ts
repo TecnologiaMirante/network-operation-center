@@ -113,7 +113,6 @@ export class PrismaAlunoRespondeAtividadesRepository implements AlunoRespondeAti
   //           if(progress === 100) {
   //             console.log("progresso foi")
   
-  //               console.log("FUNCIONOU, PORRA")
   //               const teste = "sim, a conquista funciona!";
   //               socket.emit("RESPONDA_X_ATIVIDADE", teste)
   

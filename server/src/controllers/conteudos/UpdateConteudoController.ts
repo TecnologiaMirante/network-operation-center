@@ -50,6 +50,8 @@ class UpdateConteudoController {
       return res.status(400).send(conteudo.message);
     }
 
+    console.log(array_conteudos)
+
     // A variável "array_conteudos" é opcional, portanto, o service seguinte só é chamado caso ela não seja nula
     if (array_conteudos && array_conteudos.length != 0) {
 
@@ -68,7 +70,11 @@ class UpdateConteudoController {
       }
 
       for (let item of array_conteudos) {
-        console.log(item)
+
+        console.log("\n**************************")
+        console.log(item.type)
+        console.log(item.id)
+        console.log(item.title)
 
         if (item.type == "aula") {
           const result = await createConteudoHasItensService.execute({ 

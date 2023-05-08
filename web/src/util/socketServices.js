@@ -1,7 +1,7 @@
 import io from "socket.io-client";
 
-const SOCKET_URL = "http://192.168.4.43:3010/";
-const SOCKET_URL_CONQUISTAS = "http://192.168.4.43:3010/conquistas";
+const SOCKET_URL = "http://34.151.211.219:3010/";
+const SOCKET_URL_CONQUISTAS = "http://34.151.211.219:3010/conquistas";
 // const SOCKET_URL_CONQUISTAS2 = "http://192.168.4.43:3010/conquistas2";
 
 class WSService {
@@ -10,15 +10,15 @@ class WSService {
       this.socket = io(SOCKET_URL, {
         transports: ["websocket"],
       });
-      
+
       this.socket2 = io(SOCKET_URL_CONQUISTAS, {
         transports: ["websocket"],
       });
-    
+
       // this.socket3 = io(SOCKET_URL_CONQUISTAS2, {
       //   transports: ["websocket"],
       // });
-      
+
       // console.log("initializing socket", this.socket);
 
       this.socket.on("connect", (data) => {
@@ -28,11 +28,11 @@ class WSService {
       this.socket2.on("connect", (data) => {
         // console.log("===socket on conquistas===");
       });
-      
+
       this.socket2.emmit("RESPONDA_X_ATIVIDADES", (data) => {
         // console.log("===A CONQUISTA FUNCIONOU===");
       });
-      
+
       // this.socket3.on("connect", (data) => {
       // //   console.log("===socket on conquistas===");
       // });
