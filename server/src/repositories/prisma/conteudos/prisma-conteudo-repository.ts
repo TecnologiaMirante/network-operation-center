@@ -610,6 +610,7 @@ export class PrismaConteudosRepository implements ConteudosRepository {
       select: {
         id: true,
         name: true,
+        status: true
       },
       orderBy: {
         created_at: "asc"
